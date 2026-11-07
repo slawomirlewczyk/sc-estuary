@@ -21,7 +21,7 @@
 		</assets>
 	</extension>
 </addon>
-<addon id="script.sc.widgets" name="SC Widgets" version="1.3.0" provider-name="slawomirlewczyk">
+<addon id="script.sc.widgets" name="SC Widgets" version="1.3.1" provider-name="slawomirlewczyk">
 	<requires>
 		<import addon="xbmc.python" version="3.0.1"/>
 	</requires>

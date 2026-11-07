@@ -57,11 +57,14 @@ def run(argv):
     hide_watched = xbmc.getCondVisibility("Skin.HasSetting(sc_hide_watched)")
 
     shown = set()
+    skipped = {"watched": 0, "duplicate": 0}
     for entry in entries:
         if hide_watched and entry.get("filetype") != "directory" and int(entry.get("playcount") or 0) > 0:
+            skipped["watched"] += 1
             continue
         key = movie_key(entry)
         if key and (key in shown or key in hidden):
+            skipped["duplicate"] += 1
             continue
         if key:
             shown.add(key)
@@ -69,6 +72,10 @@ def run(argv):
         is_folder = entry.get("filetype") == "directory"
         xbmcplugin.addDirectoryItem(handle, url, to_listitem(entry, is_folder), is_folder)
 
+    watched_total = sum(1 for e in entries if int(e.get("playcount") or 0) > 0)
+    store.log(f'widget {n} "{widget["label"]}": {len(entries)} items, {watched_total} marked watched '
+              f'by the add-on, hidden: {skipped["watched"]} watched, {skipped["duplicate"]} duplicate '
+              f'(hide watched={hide_watched}, hide duplicates={bool(hidden) or None})')
     xbmcplugin.endOfDirectory(handle, cacheToDisc=False)
 
 
