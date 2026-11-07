@@ -51,6 +51,30 @@
 					<control type="grouplist" id="5001">
 						<include>WidgetGroupListCommon</include>
 						<pagecontrol>5010</pagecontrol>
+						<!-- SC Estuary: add-on widget slot 1 -->
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_movies_widget1_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_movies_widget1_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="40"/>
+							<param name="list_id" value="5710"/>
+						</include>
+						<!-- SC Estuary: add-on widget slot 2 -->
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_movies_widget2_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_movies_widget2_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="40"/>
+							<param name="list_id" value="5720"/>
+						</include>
+						<!-- SC Estuary: add-on widget slot 3 -->
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_movies_widget3_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_movies_widget3_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="40"/>
+							<param name="list_id" value="5730"/>
+						</include>
 						<include content="WidgetListCategories" condition="Library.HasContent(movies) + !Skin.HasSetting(home_no_movies_categories_widget)">
 							<param name="content_path" value="library://video/movies/"/>
 							<param name="additional_movie_items" value="true"/>
@@ -102,6 +126,7 @@
 						</include>
 					</control>
 					<include content="ImageWidget" condition="!Library.HasContent(movies)">
+						<param name="visible" value="String.IsEmpty(Skin.String(sc_movies_widget1_path)) + String.IsEmpty(Skin.String(sc_movies_widget2_path)) + String.IsEmpty(Skin.String(sc_movies_widget3_path))" />
 						<param name="text_label" value="$LOCALIZE[31104]" />
 						<param name="button_label" value="$LOCALIZE[31110]" />
 						<param name="button_onclick" value="ActivateWindow(videos,files,return)"/>

@@ -811,6 +811,32 @@ msgctxt "#31615"
 msgid "Subtitle language"
 msgstr "Język napisów"
 
+
+# SC Estuary
+msgctxt "#31950"
+msgid "SC widgets"
+msgstr "Widżety SC"
+
+msgctxt "#31951"
+msgid "Add to Movies widgets"
+msgstr "Dodaj do widżetów Filmy"
+
+msgctxt "#31952"
+msgid "Remove from Movies widgets"
+msgstr "Usuń z widżetów Filmy"
+
+msgctxt "#31953"
+msgid "Clear Movies widgets"
+msgstr "Wyczyść widżety Filmy"
+
+msgctxt "#31954"
+msgid "Added to Movies widgets"
+msgstr "Dodano do widżetów Filmy"
+
+msgctxt "#31955"
+msgid "Removed from Movies widgets"
+msgstr "Usunięto z widżetów Filmy"
+
 #~ msgctxt "#31025"
 #~ msgid "No favourites found. You can add any item from media views to this list by using the context menu."
 #~ msgstr "Brak ulubionych. Możesz dodać dowolną pozycję do tej listy, z poziomu widoków mediów, przy użyciu menu kontekstowego."

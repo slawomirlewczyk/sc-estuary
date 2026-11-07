@@ -1004,3 +1004,28 @@ msgstr ""
 msgctxt "#31615"
 msgid "Subtitle language"
 msgstr ""
+
+# SC Estuary
+msgctxt "#31950"
+msgid "SC widgets"
+msgstr ""
+
+msgctxt "#31951"
+msgid "Add to Movies widgets"
+msgstr ""
+
+msgctxt "#31952"
+msgid "Remove from Movies widgets"
+msgstr ""
+
+msgctxt "#31953"
+msgid "Clear Movies widgets"
+msgstr ""
+
+msgctxt "#31954"
+msgid "Added to Movies widgets"
+msgstr ""
+
+msgctxt "#31955"
+msgid "Removed from Movies widgets"
+msgstr ""
