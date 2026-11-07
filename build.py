@@ -6,7 +6,7 @@ Usage: python3 build.py
 For every add-on folder listed in ADDONS it creates:
   docs/<id>/<id>-<version>.zip   (what the Kodi repository downloads)
 and then writes docs/addons.xml, docs/addons.xml.md5 and docs/index.html.
-The repository zip is also copied to docs/ root so it can be installed
+Every zip is also copied to docs/ root so it can be installed
 with "Install from zip file" straight from the Pages URL.
 """
 import hashlib
@@ -59,12 +59,13 @@ def main() -> None:
         zip_path = build_zip(ROOT / name, addon_id, version)
         bodies.append(body)
         print(f"built {zip_path.relative_to(ROOT)} ({zip_path.stat().st_size // 1024} KB)")
-        if addon_id == REPO_ID:
-            root_copy = DOCS / zip_path.name
-            for old in DOCS.glob(f"{REPO_ID}-*.zip"):
-                old.unlink()
-            shutil.copy2(zip_path, root_copy)
-            links.append(root_copy.name)
+        # Copy every zip to docs/ root too, so "Install from zip file" can
+        # reach it straight from the Pages URL (fallback if the repo fails)
+        root_copy = DOCS / zip_path.name
+        for old in DOCS.glob(f"{addon_id}-*.zip"):
+            old.unlink()
+        shutil.copy2(zip_path, root_copy)
+        links.append(root_copy.name)
 
     addons_xml = (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<addons>\n'
