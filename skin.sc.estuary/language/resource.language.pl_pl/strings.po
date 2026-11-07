@@ -829,6 +829,10 @@ msgctxt "#31953"
 msgid "Maximum number of widgets"
 msgstr "Maksymalna liczba widżetów"
 
+msgctxt "#31954"
+msgid "Refresh widgets"
+msgstr "Odśwież widżety"
+
 #~ msgctxt "#31025"
 #~ msgid "No favourites found. You can add any item from media views to this list by using the context menu."
 #~ msgstr "Brak ulubionych. Możesz dodać dowolną pozycję do tej listy, z poziomu widoków mediów, przy użyciu menu kontekstowego."

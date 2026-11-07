@@ -1,3 +1,7 @@
+[B]SC Estuary 1.1.1[/B]
+- "Refresh widgets": clears the FanFilm list cache and reloads all widgets
+  (Manage widgets menu, Skin settings > Home > Movies)
+
 [B]SC Estuary 1.1.0[/B]
 - up to 20 Movies widgets (limit in Skin settings > Home > Movies)
 - widgets are named when added (e.g. "Na czasie")

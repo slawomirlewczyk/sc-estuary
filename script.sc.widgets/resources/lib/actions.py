@@ -12,6 +12,8 @@ def run(action):
         add_current_folder()
     elif action == "setmax":
         set_max()
+    elif action == "refresh":
+        refresh()
     elif action == "migrate":
         store.load()  # converts SC Estuary 1.0.0 skin strings on first read
     else:
@@ -73,10 +75,14 @@ def manage():
         if not widgets:
             xbmcgui.Dialog().ok(L(32000), L(32019))
             return
-        choice = xbmcgui.Dialog().select(L(32002), [describe(w) for w in widgets])
+        options = [f"[B]{L(32028)}[/B]"] + [describe(w) for w in widgets]
+        choice = xbmcgui.Dialog().select(L(32002), options)
         if choice < 0:
             return
-        manage_widget(widgets, choice)
+        if choice == 0:
+            refresh()
+            return
+        manage_widget(widgets, choice - 1)
 
 
 def manage_widget(widgets, i):
@@ -123,3 +129,34 @@ def set_max():
     widgets = store.load()
     if len(widgets) > number:
         xbmcgui.Dialog().ok(L(32000), L(32027).format(len(widgets), number))
+
+
+# Add-ons that keep their own list cache, and the plugin call that clears it
+CACHE_CLEARERS = {
+    "plugin.video.fanfilm": "plugin://plugin.video.fanfilm/?action=clearCache",
+}
+
+
+def refresh():
+    """Clear source add-on caches (FanFilm asks to confirm), then reload all widgets."""
+    widgets = store.load()
+    sources = {p.split("/")[2] for w in widgets for p in w["paths"] if p.startswith("plugin://")}
+    monitor = xbmc.Monitor()
+    for addon_id, url in CACHE_CLEARERS.items():
+        if addon_id in sources and xbmc.getCondVisibility(f"System.AddonIsEnabled({addon_id})"):
+            xbmc.executebuiltin(f"RunPlugin({url})")
+            _wait_for_confirmation(monitor)
+    store.sync_skin(widgets)  # new token in every widget path -> Kodi reloads them
+    xbmcgui.Dialog().notification(L(32000), L(32029))
+
+
+def _wait_for_confirmation(monitor):
+    """RunPlugin is async: wait for the add-on's yes/no dialog to open and close."""
+    dialog_open = "Window.IsActive(yesnodialog)"
+    for _ in range(30):  # up to 3 s for the dialog to show up
+        if xbmc.getCondVisibility(dialog_open) or monitor.waitForAbort(0.1):
+            break
+    while xbmc.getCondVisibility(dialog_open):
+        if monitor.waitForAbort(0.2):
+            return
+    monitor.waitForAbort(1.5)  # let the add-on finish deleting its cache

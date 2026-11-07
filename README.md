@@ -32,7 +32,9 @@ Filmy** → **Dołącz do: Na czasie**. Obie strony tworzą jeden wiersz, a kafe
 
 **Zarządzaj widżetami Filmy** (menu boczne albo Ustawienia skórki → Menu
 główne → Filmy): zmiana nazwy, kolejność, usunięcie ostatniej strony,
-usunięcie widżetu. Tam też **Maksymalna liczba widżetów** (1–20).
+usunięcie widżetu, a na górze listy **Odśwież widżety** (czyści pamięć
+FanFilm i przeładowuje widżety bez restartu Kodi). W ustawieniach skórki jest
+też **Maksymalna liczba widżetów** (1–20).
 
 Logika widżetów jest w dodatku `script.sc.widgets` (instaluje się razem ze
 skórką). Lista widżetów: `userdata/addon_data/script.sc.widgets/widgets.json`.

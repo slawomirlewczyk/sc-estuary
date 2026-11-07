@@ -88,3 +88,11 @@ msgstr "Maksymalna liczba widżetów (1-{})"
 msgctxt "#32027"
 msgid "You have {} widgets; the limit is now {}. Existing widgets stay, but new ones cannot be added."
 msgstr "Masz {} widżetów, a limit to teraz {}. Istniejące zostają, ale nowych nie da się dodać."
+
+msgctxt "#32028"
+msgid "Refresh widgets"
+msgstr "Odśwież widżety"
+
+msgctxt "#32029"
+msgid "Widgets refreshed"
+msgstr "Widżety odświeżone"

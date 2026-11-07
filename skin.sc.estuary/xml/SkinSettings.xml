@@ -186,6 +186,11 @@
 					<include>DefaultSettingButton</include>
 					<onclick>RunScript(script.sc.widgets,manage)</onclick>
 				</control>
+				<control type="button" id="6114">
+					<label>- $LOCALIZE[31954]</label>
+					<include>DefaultSettingButton</include>
+					<onclick>RunScript(script.sc.widgets,refresh)</onclick>
+				</control>
 				<control type="button" id="627">
 					<label>- $LOCALIZE[31176]</label>
 					<include>DefaultSettingButton</include>

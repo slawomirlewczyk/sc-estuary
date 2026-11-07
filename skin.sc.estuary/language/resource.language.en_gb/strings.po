@@ -1021,3 +1021,7 @@ msgstr ""
 msgctxt "#31953"
 msgid "Maximum number of widgets"
 msgstr ""
+
+msgctxt "#31954"
+msgid "Refresh widgets"
+msgstr ""

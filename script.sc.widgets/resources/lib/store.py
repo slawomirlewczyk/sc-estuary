@@ -58,7 +58,7 @@ def save(widgets):
 
 
 def sync_skin(widgets):
-    token = str(int(time.time()))
+    token = str(int(time.time() * 1000))
     for n in range(1, SLOTS + 1):
         if n <= len(widgets):
             path = f"plugin://{ADDON_ID}/?w={n}&t={token}"
