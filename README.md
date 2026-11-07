@@ -26,7 +26,7 @@ w jeden widżet.
 
 Przejdź na stronę 2 tej samej listy i znowu wybierz **Dodaj do widżetów
 Filmy** → **Dołącz do: Na czasie**. Obie strony tworzą jeden wiersz, a kafelek
-„następna strona” zostaje tylko na końcu ostatniej dołączonej strony.
+„następna strona” zostaje tylko jeden – na końcu wiersza.
 
 ### Ukrywanie zdublowanych filmów
 
@@ -64,6 +64,14 @@ ocenę IMDb, a gdy i jej brak – ocenę z dodatku (TMDb).
 - IMDb: oficjalny zbiór `title.ratings.tsv.gz` (użytek prywatny), czytany w
   locie raz w tygodniu; zapisywane są tylko filmy z widżetów.
 - Dane: `userdata/addon_data/script.sc.widgets/ratings.json`.
+
+### Sortowanie po ocenie
+
+Ustawienia skórki → Menu główne → Filmy → **Sortuj widżety od najwyższej
+oceny**. Kolejność: ocena Filmweb, a gdy jej brak – IMDb, a potem ocena z
+dodatku. Filmy bez oceny trafiają na koniec, kafelek „następna strona” zawsze
+jest ostatni. Z włączonymi ocenami Filmweb kolejność ustala się w miarę, jak
+oceny dochodzą w tle.
 
 ### Zarządzanie
 

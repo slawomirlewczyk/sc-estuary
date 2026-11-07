@@ -1037,3 +1037,7 @@ msgstr ""
 msgctxt "#31957"
 msgid "Filmweb ratings (fallback: IMDb)"
 msgstr ""
+
+msgctxt "#31958"
+msgid "Sort widgets by rating (highest first)"
+msgstr ""

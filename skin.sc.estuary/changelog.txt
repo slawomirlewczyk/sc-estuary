@@ -1,3 +1,9 @@
+[B]SC Estuary 1.5.0[/B]
+- "Sort widgets by rating (highest first)" (Skin settings > Home > Movies):
+  Filmweb rating, else IMDb, else the add-on's own
+- Joined widgets: "next page" tiles no longer appear between movies; only the
+  last page's one is kept, at the end
+
 [B]SC Estuary 1.4.0[/B]
 - "Filmweb ratings (fallback: IMDb)" (Skin settings > Home > Movies):
   widget tiles show the Filmweb rating, else IMDb, else the add-on's own

@@ -2,7 +2,9 @@
 
 Every path of the widget (e.g. page 1 and page 2 of "Na czasie") is read with
 JSON-RPC Files.GetDirectory and the results are joined into one list.
-"Next page" tiles are dropped from every page except the last one.
+Folders ("next page") are dropped from every page except the last one and
+always come after the movies. With "Sort by rating" movies are ordered from the
+highest rating (Filmweb, else IMDb, else the add-on's own).
 With the skin setting "Hide duplicate movies" a movie already shown by a higher
 widget is left out of lower ones; with "Hide watched movies" anything the
 source add-on marks as watched (playcount > 0) is left out.
@@ -27,9 +29,8 @@ PROPERTIES = [
     "trailer", "imdbnumber", "uniqueid", "playcount", "art", "thumbnail", "fanart", "file",
 ]
 MINIMAL_PROPERTIES = ["title", "art", "thumbnail", "fanart", "file", "playcount"]
-# FanFilm: "?action=moviePage"; other add-ons usually label it "Next page" / "Następna strona"
+# FanFilm's "next page" link: "?action=moviePage"
 NEXT_PAGE_PATH = re.compile(r"action=\w*page\b", re.I)
-NEXT_PAGE_LABEL = re.compile(r"nast[eę]pn|next|dalej|>>|»|›", re.I)
 
 
 def run(argv):
@@ -74,8 +75,12 @@ def run(argv):
 
     shown = set()
     skipped = {"watched": 0, "duplicate": 0}
+    movies, folders = [], []
     for entry in entries:
-        if hide_watched and entry.get("filetype") != "directory" and int(entry.get("playcount") or 0) > 0:
+        if is_folder_entry(entry):
+            folders.append(entry)  # e.g. "next page": never between movies, see below
+            continue
+        if hide_watched and int(entry.get("playcount") or 0) > 0:
             skipped["watched"] += 1
             continue
         key = movie_key(entry)
@@ -84,14 +89,23 @@ def run(argv):
             continue
         if key:
             shown.add(key)
-        url = entry["file"]
-        is_folder = entry.get("filetype") == "directory"
-        xbmcplugin.addDirectoryItem(handle, url, to_listitem(entry, is_folder, rating_data), is_folder)
+        movies.append(entry)
+
+    sort_by_rating = xbmc.getCondVisibility("Skin.HasSetting(sc_sort_rating)")
+    if sort_by_rating:
+        movies.sort(key=lambda e: sort_rating(e, rating_data), reverse=True)  # stable: ties keep order
+    # folders go after the movies; a joined widget keeps only the last page's "next page"
+    if len(widget["paths"]) > 1:
+        folders = folders[-1:]
+    for entry in movies + folders:
+        is_folder = is_folder_entry(entry)
+        xbmcplugin.addDirectoryItem(handle, entry["file"], to_listitem(entry, is_folder, rating_data), is_folder)
 
     watched_total = sum(1 for e in entries if int(e.get("playcount") or 0) > 0)
     store.log(f'widget {n} "{widget["label"]}": {len(entries)} items, {watched_total} marked watched '
               f'by the add-on, hidden: {skipped["watched"]} watched, {skipped["duplicate"]} duplicate '
-              f'(hide watched={hide_watched}, hide duplicates={bool(hidden) or None})')
+              f'(hide watched={hide_watched}, hide duplicates={bool(hidden) or None}, '
+              f'sort by rating={sort_by_rating}, folders shown={len(folders)})')
     xbmcplugin.endOfDirectory(handle, cacheToDisc=False)
 
 
@@ -102,7 +116,8 @@ def widget_entries(widget):
     for index, path in enumerate(paths):
         last_page = index == len(paths) - 1
         for entry in get_directory(path):
-            if not entry.get("file") or (not last_page and is_next_page(entry)):
+            # only the last page keeps folders ("next page"); earlier pages give just movies
+            if not entry.get("file") or (not last_page and is_folder_entry(entry)):
                 continue
             result.append(entry)
     return result
@@ -133,7 +148,7 @@ TMDB_RE = re.compile(r"[?&]tmdb=(\d+)")
 
 def movie_key(entry):
     """Identity of a movie across add-on lists; None for folders (e.g. next page)."""
-    if entry.get("filetype") == "directory":
+    if is_folder_entry(entry):
         return None
     ids = entry.get("uniqueid") or {}
     imdb = str(ids.get("imdb") or entry.get("imdbnumber") or "")
@@ -167,11 +182,23 @@ def get_directory(path):
     return []
 
 
-def is_next_page(entry):
-    if entry.get("filetype") != "directory":
-        return False
-    return bool(NEXT_PAGE_PATH.search(entry.get("file", "")) or
-                NEXT_PAGE_LABEL.search(entry.get("label", "")))
+def is_folder_entry(entry):
+    """Folder, or a "next page" link even if reported as a file."""
+    return entry.get("filetype") == "directory" or bool(NEXT_PAGE_PATH.search(entry.get("file", "")))
+
+
+def sort_rating(entry, rating_data=None):
+    """Rating used to sort: Filmweb, else IMDb, else the add-on's own; 0 when unknown."""
+    key = movie_key(entry) or ""
+    if rating_data is not None and key.startswith("imdb:"):
+        known = ratings.for_movie(rating_data, key[5:])
+        for source in ("filmweb", "imdb"):
+            if source in known:
+                return known[source][0]
+    try:
+        return float(entry.get("rating") or 0)
+    except (TypeError, ValueError):
+        return 0.0
 
 
 def to_listitem(entry, is_folder, rating_data=None):

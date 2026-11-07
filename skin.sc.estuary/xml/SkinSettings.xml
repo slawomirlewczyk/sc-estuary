@@ -212,6 +212,13 @@
 					<onclick>Skin.ToggleSetting(sc_filmweb_ratings)</onclick>
 					<onclick>RunScript(script.sc.widgets,reload)</onclick>
 				</control>
+				<control type="radiobutton" id="6118">
+					<label>- $LOCALIZE[31958]</label>
+					<include>DefaultSettingButton</include>
+					<selected>Skin.HasSetting(sc_sort_rating)</selected>
+					<onclick>Skin.ToggleSetting(sc_sort_rating)</onclick>
+					<onclick>RunScript(script.sc.widgets,reload)</onclick>
+				</control>
 				<control type="button" id="627">
 					<label>- $LOCALIZE[31176]</label>
 					<include>DefaultSettingButton</include>
