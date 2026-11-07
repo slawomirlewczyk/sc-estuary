@@ -175,6 +175,17 @@
 					<onclick>ActivateWindow(1101)</onclick>
 					<enable>!Skin.HasSetting(HomeMenuNoMovieButton)</enable>
 				</control>
+				<control type="button" id="6112">
+					<label>- $LOCALIZE[31953]</label>
+					<label2>$VAR[SCMaxWidgetsVar]</label2>
+					<include>DefaultSettingButton</include>
+					<onclick>RunScript(script.sc.widgets,setmax)</onclick>
+				</control>
+				<control type="button" id="6113">
+					<label>- $LOCALIZE[31952]</label>
+					<include>DefaultSettingButton</include>
+					<onclick>RunScript(script.sc.widgets,manage)</onclick>
+				</control>
 				<control type="button" id="627">
 					<label>- $LOCALIZE[31176]</label>
 					<include>DefaultSettingButton</include>

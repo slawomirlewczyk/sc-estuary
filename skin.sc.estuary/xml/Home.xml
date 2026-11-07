@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <window>
 	<defaultcontrol>9000</defaultcontrol>
+	<!-- SC Estuary: move widgets saved by 1.0.0 to script.sc.widgets -->
+	<onload condition="String.IsEmpty(Skin.String(sc_mw1_path)) + !String.IsEmpty(Skin.String(sc_movies_widget1_path))">RunScript(script.sc.widgets,migrate)</onload>
 	<backgroundcolor>background</backgroundcolor>
 	<controls>
 		<control type="button" id="20000">
@@ -51,29 +53,146 @@
 					<control type="grouplist" id="5001">
 						<include>WidgetGroupListCommon</include>
 						<pagecontrol>5010</pagecontrol>
-						<!-- SC Estuary: add-on widget slot 1 -->
+						<!-- SC Estuary: widget rows managed by script.sc.widgets -->
 						<include content="WidgetListPoster">
-							<param name="content_path" value="$INFO[Skin.String(sc_movies_widget1_path)]"/>
-							<param name="widget_header" value="$INFO[Skin.String(sc_movies_widget1_label)]"/>
+							<param name="content_path" value="$INFO[Skin.String(sc_mw1_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw1_label)]"/>
 							<param name="widget_target" value="videos"/>
-							<param name="limit" value="40"/>
-							<param name="list_id" value="5710"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57010"/>
 						</include>
-						<!-- SC Estuary: add-on widget slot 2 -->
 						<include content="WidgetListPoster">
-							<param name="content_path" value="$INFO[Skin.String(sc_movies_widget2_path)]"/>
-							<param name="widget_header" value="$INFO[Skin.String(sc_movies_widget2_label)]"/>
+							<param name="content_path" value="$INFO[Skin.String(sc_mw2_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw2_label)]"/>
 							<param name="widget_target" value="videos"/>
-							<param name="limit" value="40"/>
-							<param name="list_id" value="5720"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57020"/>
 						</include>
-						<!-- SC Estuary: add-on widget slot 3 -->
 						<include content="WidgetListPoster">
-							<param name="content_path" value="$INFO[Skin.String(sc_movies_widget3_path)]"/>
-							<param name="widget_header" value="$INFO[Skin.String(sc_movies_widget3_label)]"/>
+							<param name="content_path" value="$INFO[Skin.String(sc_mw3_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw3_label)]"/>
 							<param name="widget_target" value="videos"/>
-							<param name="limit" value="40"/>
-							<param name="list_id" value="5730"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57030"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw4_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw4_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57040"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw5_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw5_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57050"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw6_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw6_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57060"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw7_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw7_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57070"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw8_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw8_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57080"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw9_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw9_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57090"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw10_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw10_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57100"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw11_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw11_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57110"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw12_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw12_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57120"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw13_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw13_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57130"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw14_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw14_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57140"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw15_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw15_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57150"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw16_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw16_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57160"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw17_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw17_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57170"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw18_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw18_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57180"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw19_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw19_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57190"/>
+						</include>
+						<include content="WidgetListPoster">
+							<param name="content_path" value="$INFO[Skin.String(sc_mw20_path)]"/>
+							<param name="widget_header" value="$INFO[Skin.String(sc_mw20_label)]"/>
+							<param name="widget_target" value="videos"/>
+							<param name="limit" value="200"/>
+							<param name="list_id" value="57200"/>
 						</include>
 						<include content="WidgetListCategories" condition="Library.HasContent(movies) + !Skin.HasSetting(home_no_movies_categories_widget)">
 							<param name="content_path" value="library://video/movies/"/>
@@ -126,7 +245,7 @@
 						</include>
 					</control>
 					<include content="ImageWidget" condition="!Library.HasContent(movies)">
-						<param name="visible" value="String.IsEmpty(Skin.String(sc_movies_widget1_path)) + String.IsEmpty(Skin.String(sc_movies_widget2_path)) + String.IsEmpty(Skin.String(sc_movies_widget3_path))" />
+						<param name="visible" value="String.IsEmpty(Skin.String(sc_mw1_path))" />
 						<param name="text_label" value="$LOCALIZE[31104]" />
 						<param name="button_label" value="$LOCALIZE[31110]" />
 						<param name="button_onclick" value="ActivateWindow(videos,files,return)"/>

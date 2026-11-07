@@ -822,20 +822,12 @@ msgid "Add to Movies widgets"
 msgstr "Dodaj do widżetów Filmy"
 
 msgctxt "#31952"
-msgid "Remove from Movies widgets"
-msgstr "Usuń z widżetów Filmy"
+msgid "Manage Movies widgets"
+msgstr "Zarządzaj widżetami Filmy"
 
 msgctxt "#31953"
-msgid "Clear Movies widgets"
-msgstr "Wyczyść widżety Filmy"
-
-msgctxt "#31954"
-msgid "Added to Movies widgets"
-msgstr "Dodano do widżetów Filmy"
-
-msgctxt "#31955"
-msgid "Removed from Movies widgets"
-msgstr "Usunięto z widżetów Filmy"
+msgid "Maximum number of widgets"
+msgstr "Maksymalna liczba widżetów"
 
 #~ msgctxt "#31025"
 #~ msgid "No favourites found. You can add any item from media views to this list by using the context menu."

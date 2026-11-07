@@ -976,4 +976,8 @@
 		<value condition="Window.IsActive(visualisation) + !String.IsEmpty(MusicPlayer.BMP)">$INFO[MusicPlayer.BMP]</value>
 		<value condition="!String.IsEmpty(ListItem.BMP)">$INFO[ListItem.BMP]</value>
 	</variable>
+	<variable name="SCMaxWidgetsVar">
+		<value condition="!String.IsEmpty(Skin.String(sc_max_widgets))">$INFO[Skin.String(sc_max_widgets)]</value>
+		<value>20</value>
+	</variable>
 </includes>

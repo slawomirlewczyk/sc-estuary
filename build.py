@@ -18,7 +18,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 DOCS = ROOT / "docs"
-ADDONS = ["repository.sc", "skin.sc.estuary"]
+ADDONS = ["repository.sc", "script.sc.widgets", "skin.sc.estuary"]
 REPO_ID = "repository.sc"
 SKIP_NAMES = {".git", ".DS_Store", "__pycache__", "Thumbs.db"}
 

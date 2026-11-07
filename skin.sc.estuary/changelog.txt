@@ -1,3 +1,14 @@
+[B]SC Estuary 1.1.0[/B]
+- up to 20 Movies widgets (limit in Skin settings > Home > Movies)
+- widgets are named when added (e.g. "Na czasie")
+- several pages of a list can be merged into one widget
+- "next page" tile shown only for the last merged page
+- Manage widgets: rename, reorder, remove last page, delete
+- needs script.sc.widgets (installed automatically)
+
+[B]SC Estuary 1.0.0[/B]
+- up to 3 add-on widgets under Movies
+
 [B]0.8.5[/B]
 • Updated language files from Transifex
 

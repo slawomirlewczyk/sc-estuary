@@ -1,0 +1,90 @@
+# Kodi Media Center language file
+# Addon id: script.sc.widgets
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: pl_PL\n"
+
+msgctxt "#32000"
+msgid "SC Widgets"
+msgstr "Widżety SC"
+
+msgctxt "#32001"
+msgid "Add to Movies widgets"
+msgstr "Dodaj do widżetów Filmy"
+
+msgctxt "#32002"
+msgid "Manage Movies widgets"
+msgstr "Zarządzaj widżetami Filmy"
+
+msgctxt "#32010"
+msgid "{} pages"
+msgstr "stron: {}"
+
+msgctxt "#32011"
+msgid "Open an add-on folder first"
+msgstr "Najpierw otwórz folder w dodatku"
+
+msgctxt "#32012"
+msgid "Already in widget: {}"
+msgstr "Już jest w widżecie: {}"
+
+msgctxt "#32013"
+msgid "New widget"
+msgstr "Nowy widżet"
+
+msgctxt "#32014"
+msgid "Append to: {}"
+msgstr "Dołącz do: {}"
+
+msgctxt "#32015"
+msgid "Widget limit reached ({}). Remove a widget or raise the limit in skin settings."
+msgstr "Osiągnięto limit widżetów ({}). Usuń któryś widżet albo zwiększ limit w ustawieniach skórki."
+
+msgctxt "#32016"
+msgid "Widget name"
+msgstr "Nazwa widżetu"
+
+msgctxt "#32017"
+msgid "Added widget: {}"
+msgstr "Dodano widżet: {}"
+
+msgctxt "#32018"
+msgid "Page added to: {}"
+msgstr "Dołączono stronę do: {}"
+
+msgctxt "#32019"
+msgid "No widgets yet. Open an add-on folder, press Left and choose \"Add to Movies widgets\"."
+msgstr "Brak widżetów. Otwórz folder w dodatku, naciśnij strzałkę w lewo i wybierz „Dodaj do widżetów Filmy”."
+
+msgctxt "#32020"
+msgid "Rename"
+msgstr "Zmień nazwę"
+
+msgctxt "#32021"
+msgid "Move up"
+msgstr "Przesuń w górę"
+
+msgctxt "#32022"
+msgid "Move down"
+msgstr "Przesuń w dół"
+
+msgctxt "#32023"
+msgid "Remove last page"
+msgstr "Usuń ostatnią stronę"
+
+msgctxt "#32024"
+msgid "Delete widget"
+msgstr "Usuń widżet"
+
+msgctxt "#32025"
+msgid "Delete widget \"{}\"?"
+msgstr "Usunąć widżet „{}”?"
+
+msgctxt "#32026"
+msgid "Maximum number of widgets (1-{})"
+msgstr "Maksymalna liczba widżetów (1-{})"
+
+msgctxt "#32027"
+msgid "You have {} widgets; the limit is now {}. Existing widgets stay, but new ones cannot be added."
+msgstr "Masz {} widżetów, a limit to teraz {}. Istniejące zostają, ale nowych nie da się dodać."

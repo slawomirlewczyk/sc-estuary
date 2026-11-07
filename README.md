@@ -2,7 +2,8 @@
 
 Skórka Estuary z Kodi 22 (Piers) z jednym dodatkiem: **dowolny folder z dodatku
 (np. FanFilm → Filmy → Na czasie) można przypiąć jako wiersz plakatów pod
-„Filmy” na ekranie głównym**. Maksymalnie 3 widżety.
+„Filmy” na ekranie głównym**. Do 20 widżetów, kilka stron listy można połączyć
+w jeden widżet.
 
 ## Instalacja w Kodi
 
@@ -18,10 +19,23 @@ Skórka Estuary z Kodi 22 (Piers) z jednym dodatkiem: **dowolny folder z dodatku
 
 1. Wejdź do folderu w dodatku (np. FanFilm → Filmy → Na czasie).
 2. Naciśnij **strzałkę w lewo**, żeby otworzyć menu boczne.
-3. W sekcji **Widżety SC** wybierz **Dodaj do widżetów Filmy**.
+3. W sekcji **Widżety SC** wybierz **Dodaj do widżetów Filmy** →
+   **Nowy widżet** i wpisz nazwę (np. „Na czasie”).
 
-W tym samym menu są przyciski **Usuń z widżetów Filmy** (gdy jesteś w już
-przypiętym folderze) oraz **Wyczyść widżety Filmy**.
+### Łączenie stron
+
+Przejdź na stronę 2 tej samej listy i znowu wybierz **Dodaj do widżetów
+Filmy** → **Dołącz do: Na czasie**. Obie strony tworzą jeden wiersz, a kafelek
+„następna strona” zostaje tylko na końcu ostatniej dołączonej strony.
+
+### Zarządzanie
+
+**Zarządzaj widżetami Filmy** (menu boczne albo Ustawienia skórki → Menu
+główne → Filmy): zmiana nazwy, kolejność, usunięcie ostatniej strony,
+usunięcie widżetu. Tam też **Maksymalna liczba widżetów** (1–20).
+
+Logika widżetów jest w dodatku `script.sc.widgets` (instaluje się razem ze
+skórką). Lista widżetów: `userdata/addon_data/script.sc.widgets/widgets.json`.
 
 ## Budowanie
 
@@ -29,7 +43,7 @@ przypiętym folderze) oraz **Wyczyść widżety Filmy**.
 python3 build.py
 ```
 
-Pakuje `repository.sc/` i `skin.sc.estuary/` do `docs/` (publikowanego przez
+Pakuje `repository.sc/`, `script.sc.widgets/` i `skin.sc.estuary/` do `docs/` (publikowanego przez
 GitHub Pages) i generuje `addons.xml`, `addons.xml.md5` i `index.html`.
 Przed wydaniem nowej wersji podbij `version` w `skin.sc.estuary/addon.xml`;
 Kodi zaktualizuje skórkę automatycznie.

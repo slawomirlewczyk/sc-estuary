@@ -168,7 +168,7 @@
 						<onclick>Addon.OpenSettings($INFO[Container.PluginName])</onclick>
 						<visible>!String.IsEmpty(Container.PluginName)</visible>
 					</control>
-					<!-- SC Estuary: pin the current add-on folder as a Movies widget on Home -->
+					<!-- SC Estuary: pin the current add-on folder as a Movies widget (script.sc.widgets) -->
 					<control type="label" id="630">
 						<include>MediaMenuLabelCommon</include>
 						<label>$LOCALIZE[31950]</label>
@@ -178,40 +178,15 @@
 						<description>Add current folder to Movies widgets</description>
 						<include>MediaMenuItemsCommon</include>
 						<label>$LOCALIZE[31951]</label>
-						<onclick condition="String.IsEmpty(Skin.String(sc_movies_widget1_path))">Skin.SetString(sc_movies_widget1_path,$ESCINFO[Container.FolderPath])</onclick>
-						<onclick condition="String.IsEmpty(Skin.String(sc_movies_widget1_path))">Skin.SetString(sc_movies_widget1_label,$ESCINFO[Container.FolderName])</onclick>
-						<onclick condition="!String.IsEmpty(Skin.String(sc_movies_widget1_path)) + String.IsEmpty(Skin.String(sc_movies_widget2_path))">Skin.SetString(sc_movies_widget2_path,$ESCINFO[Container.FolderPath])</onclick>
-						<onclick condition="!String.IsEmpty(Skin.String(sc_movies_widget1_path)) + String.IsEmpty(Skin.String(sc_movies_widget2_path))">Skin.SetString(sc_movies_widget2_label,$ESCINFO[Container.FolderName])</onclick>
-						<onclick condition="!String.IsEmpty(Skin.String(sc_movies_widget1_path)) + !String.IsEmpty(Skin.String(sc_movies_widget2_path)) + String.IsEmpty(Skin.String(sc_movies_widget3_path))">Skin.SetString(sc_movies_widget3_path,$ESCINFO[Container.FolderPath])</onclick>
-						<onclick condition="!String.IsEmpty(Skin.String(sc_movies_widget1_path)) + !String.IsEmpty(Skin.String(sc_movies_widget2_path)) + String.IsEmpty(Skin.String(sc_movies_widget3_path))">Skin.SetString(sc_movies_widget3_label,$ESCINFO[Container.FolderName])</onclick>
-						<onclick>Notification($LOCALIZE[31954],$ESCINFO[Container.FolderName],3000)</onclick>
-						<visible>!String.IsEmpty(Container.PluginName) + ![String.IsEqual(Skin.String(sc_movies_widget1_path),Container.FolderPath) | String.IsEqual(Skin.String(sc_movies_widget2_path),Container.FolderPath) | String.IsEqual(Skin.String(sc_movies_widget3_path),Container.FolderPath)] + [String.IsEmpty(Skin.String(sc_movies_widget1_path)) | String.IsEmpty(Skin.String(sc_movies_widget2_path)) | String.IsEmpty(Skin.String(sc_movies_widget3_path))]</visible>
+						<onclick>RunScript(script.sc.widgets,add)</onclick>
+						<visible>!String.IsEmpty(Container.PluginName)</visible>
 					</control>
 					<control type="button" id="632">
-						<description>Remove current folder from Movies widgets</description>
+						<description>Manage Movies widgets</description>
 						<include>MediaMenuItemsCommon</include>
 						<label>$LOCALIZE[31952]</label>
-						<onclick condition="String.IsEqual(Skin.String(sc_movies_widget1_path),Container.FolderPath)">Skin.Reset(sc_movies_widget1_path)</onclick>
-						<onclick condition="String.IsEqual(Skin.String(sc_movies_widget1_path),Container.FolderPath)">Skin.Reset(sc_movies_widget1_label)</onclick>
-						<onclick condition="String.IsEqual(Skin.String(sc_movies_widget2_path),Container.FolderPath)">Skin.Reset(sc_movies_widget2_path)</onclick>
-						<onclick condition="String.IsEqual(Skin.String(sc_movies_widget2_path),Container.FolderPath)">Skin.Reset(sc_movies_widget2_label)</onclick>
-						<onclick condition="String.IsEqual(Skin.String(sc_movies_widget3_path),Container.FolderPath)">Skin.Reset(sc_movies_widget3_path)</onclick>
-						<onclick condition="String.IsEqual(Skin.String(sc_movies_widget3_path),Container.FolderPath)">Skin.Reset(sc_movies_widget3_label)</onclick>
-						<onclick>Notification($LOCALIZE[31955],$ESCINFO[Container.FolderName],3000)</onclick>
-						<visible>!String.IsEmpty(Container.PluginName) + [String.IsEqual(Skin.String(sc_movies_widget1_path),Container.FolderPath) | String.IsEqual(Skin.String(sc_movies_widget2_path),Container.FolderPath) | String.IsEqual(Skin.String(sc_movies_widget3_path),Container.FolderPath)]</visible>
-					</control>
-					<control type="button" id="633">
-						<description>Clear all Movies widgets</description>
-						<include>MediaMenuItemsCommon</include>
-						<label>$LOCALIZE[31953]</label>
-						<onclick>Skin.Reset(sc_movies_widget1_path)</onclick>
-						<onclick>Skin.Reset(sc_movies_widget1_label)</onclick>
-						<onclick>Skin.Reset(sc_movies_widget2_path)</onclick>
-						<onclick>Skin.Reset(sc_movies_widget2_label)</onclick>
-						<onclick>Skin.Reset(sc_movies_widget3_path)</onclick>
-						<onclick>Skin.Reset(sc_movies_widget3_label)</onclick>
-						<onclick>Notification($LOCALIZE[31953],$LOCALIZE[31955],3000)</onclick>
-						<visible>!String.IsEmpty(Container.PluginName) + [!String.IsEmpty(Skin.String(sc_movies_widget1_path)) | !String.IsEmpty(Skin.String(sc_movies_widget2_path)) | !String.IsEmpty(Skin.String(sc_movies_widget3_path))]</visible>
+						<onclick>RunScript(script.sc.widgets,manage)</onclick>
+						<visible>!String.IsEmpty(Container.PluginName) + !String.IsEmpty(Skin.String(sc_mw1_path))</visible>
 					</control>
 					<include>MediaMenuNowPlaying</include>
 				</control>

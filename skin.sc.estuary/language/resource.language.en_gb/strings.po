@@ -1015,17 +1015,9 @@ msgid "Add to Movies widgets"
 msgstr ""
 
 msgctxt "#31952"
-msgid "Remove from Movies widgets"
+msgid "Manage Movies widgets"
 msgstr ""
 
 msgctxt "#31953"
-msgid "Clear Movies widgets"
-msgstr ""
-
-msgctxt "#31954"
-msgid "Added to Movies widgets"
-msgstr ""
-
-msgctxt "#31955"
-msgid "Removed from Movies widgets"
+msgid "Maximum number of widgets"
 msgstr ""

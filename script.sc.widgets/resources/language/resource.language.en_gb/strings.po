@@ -1,0 +1,90 @@
+# Kodi Media Center language file
+# Addon id: script.sc.widgets
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: en_GB\n"
+
+msgctxt "#32000"
+msgid "SC Widgets"
+msgstr ""
+
+msgctxt "#32001"
+msgid "Add to Movies widgets"
+msgstr ""
+
+msgctxt "#32002"
+msgid "Manage Movies widgets"
+msgstr ""
+
+msgctxt "#32010"
+msgid "{} pages"
+msgstr ""
+
+msgctxt "#32011"
+msgid "Open an add-on folder first"
+msgstr ""
+
+msgctxt "#32012"
+msgid "Already in widget: {}"
+msgstr ""
+
+msgctxt "#32013"
+msgid "New widget"
+msgstr ""
+
+msgctxt "#32014"
+msgid "Append to: {}"
+msgstr ""
+
+msgctxt "#32015"
+msgid "Widget limit reached ({}). Remove a widget or raise the limit in skin settings."
+msgstr ""
+
+msgctxt "#32016"
+msgid "Widget name"
+msgstr ""
+
+msgctxt "#32017"
+msgid "Added widget: {}"
+msgstr ""
+
+msgctxt "#32018"
+msgid "Page added to: {}"
+msgstr ""
+
+msgctxt "#32019"
+msgid "No widgets yet. Open an add-on folder, press Left and choose \"Add to Movies widgets\"."
+msgstr ""
+
+msgctxt "#32020"
+msgid "Rename"
+msgstr ""
+
+msgctxt "#32021"
+msgid "Move up"
+msgstr ""
+
+msgctxt "#32022"
+msgid "Move down"
+msgstr ""
+
+msgctxt "#32023"
+msgid "Remove last page"
+msgstr ""
+
+msgctxt "#32024"
+msgid "Delete widget"
+msgstr ""
+
+msgctxt "#32025"
+msgid "Delete widget \"{}\"?"
+msgstr ""
+
+msgctxt "#32026"
+msgid "Maximum number of widgets (1-{})"
+msgstr ""
+
+msgctxt "#32027"
+msgid "You have {} widgets; the limit is now {}. Existing widgets stay, but new ones cannot be added."
+msgstr ""
