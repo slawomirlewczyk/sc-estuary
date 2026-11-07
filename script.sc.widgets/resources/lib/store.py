@@ -8,6 +8,7 @@ The skin only reads skin strings, so after every change we write, for slot n:
     sc_mw<n>_label = widget label
 A new token on each change makes Kodi reload the widget instead of using its cache.
 """
+import hashlib
 import json
 import os
 import time
@@ -22,6 +23,8 @@ SLOTS = 20  # widget rows defined in the skin's Home.xml
 DEFAULT_MAX = 20
 DATA_DIR = xbmcvfs.translatePath(f"special://profile/addon_data/{ADDON_ID}/")
 DATA_FILE = os.path.join(DATA_DIR, "widgets.json")
+SEEN_DIR = os.path.join(DATA_DIR, "seen")
+SEEN_TTL = 10 * 60  # seconds a widget's movie list is reused for duplicate hiding
 
 
 def log(msg, level=xbmc.LOGINFO):
@@ -97,3 +100,43 @@ def _migrate_v1():
             xbmc.executebuiltin(f"Skin.Reset(sc_movies_widget{n}_path)")
             xbmc.executebuiltin(f"Skin.Reset(sc_movies_widget{n}_label)")
     return widgets
+
+
+def _seen_file(n):
+    return os.path.join(SEEN_DIR, f"w{n}.json")
+
+
+def _paths_sig(paths):
+    return hashlib.sha1("\n".join(paths).encode("utf-8")).hexdigest()
+
+
+def save_seen(n, paths, keys):
+    """Remember which movies widget n shows, for duplicate hiding in lower widgets."""
+    try:
+        os.makedirs(SEEN_DIR, exist_ok=True)
+        tmp = _seen_file(n) + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump({"sig": _paths_sig(paths), "time": time.time(), "keys": keys}, f)
+        os.replace(tmp, _seen_file(n))
+    except OSError as e:
+        log(f"cannot write seen list {n}: {e}", xbmc.LOGWARNING)
+
+
+def load_seen(n, paths):
+    """Movie keys of widget n if saved recently for the same pages, else None."""
+    try:
+        with open(_seen_file(n), encoding="utf-8") as f:
+            data = json.load(f)
+    except (OSError, ValueError):
+        return None
+    if data.get("sig") != _paths_sig(paths) or time.time() - data.get("time", 0) > SEEN_TTL:
+        return None
+    return data.get("keys") or []
+
+
+def clear_seen():
+    try:
+        for name in os.listdir(SEEN_DIR):
+            os.remove(os.path.join(SEEN_DIR, name))
+    except OSError:
+        pass

@@ -1,4 +1,4 @@
-"""Skin actions: RunScript(script.sc.widgets,add|manage|setmax)."""
+"""Skin actions: RunScript(script.sc.widgets,add|manage|setmax|refresh|reload)."""
 import xbmc
 import xbmcgui
 
@@ -14,6 +14,8 @@ def run(action):
         set_max()
     elif action == "refresh":
         refresh()
+    elif action == "reload":
+        store.sync_skin(store.load())  # e.g. after toggling "Hide duplicate movies"
     elif action == "migrate":
         store.load()  # converts SC Estuary 1.0.0 skin strings on first read
     else:
@@ -146,6 +148,7 @@ def refresh():
         if addon_id in sources and xbmc.getCondVisibility(f"System.AddonIsEnabled({addon_id})"):
             xbmc.executebuiltin(f"RunPlugin({url})")
             _wait_for_confirmation(monitor)
+    store.clear_seen()
     store.sync_skin(widgets)  # new token in every widget path -> Kodi reloads them
     xbmcgui.Dialog().notification(L(32000), L(32029))
 

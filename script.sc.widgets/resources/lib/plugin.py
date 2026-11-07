@@ -3,6 +3,8 @@
 Every path of the widget (e.g. page 1 and page 2 of "Na czasie") is read with
 JSON-RPC Files.GetDirectory and the results are joined into one list.
 "Next page" tiles are dropped from every page except the last one.
+With the skin setting "Hide duplicate movies" a movie already shown by a higher
+widget is left out of lower ones.
 """
 import json
 import re
@@ -38,24 +40,78 @@ def run(argv):
         xbmcplugin.endOfDirectory(handle, succeeded=False)
         return
 
-    paths = widgets[n - 1]["paths"]
+    widget = widgets[n - 1]
     xbmcplugin.setContent(handle, "movies")
-    xbmcplugin.setPluginCategory(handle, widgets[n - 1]["label"])
+    xbmcplugin.setPluginCategory(handle, widget["label"])
 
-    seen = set()
+    entries = widget_entries(widget)
+    store.save_seen(n, widget["paths"], [k for k in map(movie_key, entries) if k])
+
+    # "Hide duplicate movies": skip anything an earlier (higher) widget already shows
+    hidden = set()
+    if xbmc.getCondVisibility("Skin.HasSetting(sc_hide_duplicates)"):
+        for k in range(1, n):
+            hidden.update(seen_keys(k, widgets[k - 1]))
+
+    shown = set()
+    for entry in entries:
+        key = movie_key(entry)
+        if key and (key in shown or key in hidden):
+            continue
+        if key:
+            shown.add(key)
+        url = entry["file"]
+        is_folder = entry.get("filetype") == "directory"
+        xbmcplugin.addDirectoryItem(handle, url, to_listitem(entry, is_folder), is_folder)
+
+    xbmcplugin.endOfDirectory(handle, cacheToDisc=False)
+
+
+def widget_entries(widget):
+    """All entries of a widget's pages, "next page" tiles only from the last page."""
+    paths = widget["paths"]
+    result = []
     for index, path in enumerate(paths):
         last_page = index == len(paths) - 1
         for entry in get_directory(path):
-            if not last_page and is_next_page(entry):
+            if not entry.get("file") or (not last_page and is_next_page(entry)):
                 continue
-            url = entry.get("file", "")
-            if not url or url in seen:
-                continue
-            seen.add(url)
-            is_folder = entry.get("filetype") == "directory"
-            xbmcplugin.addDirectoryItem(handle, url, to_listitem(entry, is_folder), is_folder)
+            result.append(entry)
+    return result
 
-    xbmcplugin.endOfDirectory(handle, cacheToDisc=False)
+
+def seen_keys(k, widget):
+    """Movie keys of widget k: from the short-lived cache, else fetched now."""
+    keys = store.load_seen(k, widget["paths"])
+    if keys is None:
+        keys = [key for key in map(movie_key, widget_entries(widget)) if key]
+        store.save_seen(k, widget["paths"], keys)
+    return keys
+
+
+IMDB_RE = re.compile(r"[?&]imdb=(tt\d+)")
+TMDB_RE = re.compile(r"[?&]tmdb=(\d+)")
+
+
+def movie_key(entry):
+    """Identity of a movie across add-on lists; None for folders (e.g. next page)."""
+    if entry.get("filetype") == "directory":
+        return None
+    ids = entry.get("uniqueid") or {}
+    imdb = str(ids.get("imdb") or entry.get("imdbnumber") or "")
+    if not imdb.startswith("tt"):
+        m = IMDB_RE.search(entry.get("file", ""))
+        imdb = m.group(1) if m else ""
+    if imdb:
+        return f"imdb:{imdb}"
+    tmdb = str(ids.get("tmdb") or "")
+    if not tmdb:
+        m = TMDB_RE.search(entry.get("file", ""))
+        tmdb = m.group(1) if m else ""
+    if tmdb and tmdb != "0":
+        return f"tmdb:{tmdb}"
+    title = (entry.get("title") or entry.get("label") or "").strip().lower()
+    return f"title:{title}|{entry.get('year') or ''}" if title else f"url:{entry['file']}"
 
 
 def get_directory(path):

@@ -28,6 +28,13 @@ Przejdź na stronę 2 tej samej listy i znowu wybierz **Dodaj do widżetów
 Filmy** → **Dołącz do: Na czasie**. Obie strony tworzą jeden wiersz, a kafelek
 „następna strona” zostaje tylko na końcu ostatniej dołączonej strony.
 
+### Ukrywanie zdublowanych filmów
+
+Ustawienia skórki → Menu główne → Filmy → **Ukrywaj zdublowane filmy**.
+Film pokazany w widżecie wyżej nie pojawi się w żadnym widżecie niżej
+(pierwszeństwo ma kolejność widżetów). Filmy są rozpoznawane po IMDb/TMDb,
+a gdy ich brak, po tytule i roku.
+
 ### Zarządzanie
 
 **Zarządzaj widżetami Filmy** (menu boczne albo Ustawienia skórki → Menu

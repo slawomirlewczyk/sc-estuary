@@ -1025,3 +1025,7 @@ msgstr ""
 msgctxt "#31954"
 msgid "Refresh widgets"
 msgstr ""
+
+msgctxt "#31955"
+msgid "Hide duplicate movies"
+msgstr ""

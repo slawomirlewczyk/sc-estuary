@@ -1,3 +1,8 @@
+[B]SC Estuary 1.2.0[/B]
+- "Hide duplicate movies" (Skin settings > Home > Movies): a movie shown in a
+  higher widget is left out of the widgets below it
+- duplicates inside one widget are matched by IMDb/TMDb id, not by URL
+
 [B]SC Estuary 1.1.1[/B]
 - "Refresh widgets": clears the FanFilm list cache and reloads all widgets
   (Manage widgets menu, Skin settings > Home > Movies)
