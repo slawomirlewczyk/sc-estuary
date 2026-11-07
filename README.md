@@ -35,6 +35,13 @@ Film pokazany w widżecie wyżej nie pojawi się w żadnym widżecie niżej
 (pierwszeństwo ma kolejność widżetów). Filmy są rozpoznawane po IMDb/TMDb,
 a gdy ich brak, po tytule i roku.
 
+### Ukrywanie obejrzanych filmów
+
+Ustawienia skórki → Menu główne → Filmy → **Ukrywaj obejrzane filmy**.
+Opcja Kodi „Ukryj obejrzane” działa tylko w oknie listy, nie w widżetach,
+dlatego skórka ma własną. Korzysta z oznaczeń dodatku (FanFilm: lokalnie
+albo z Trakt).
+
 ### Zarządzanie
 
 **Zarządzaj widżetami Filmy** (menu boczne albo Ustawienia skórki → Menu

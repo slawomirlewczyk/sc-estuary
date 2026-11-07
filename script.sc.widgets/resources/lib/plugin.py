@@ -4,7 +4,8 @@ Every path of the widget (e.g. page 1 and page 2 of "Na czasie") is read with
 JSON-RPC Files.GetDirectory and the results are joined into one list.
 "Next page" tiles are dropped from every page except the last one.
 With the skin setting "Hide duplicate movies" a movie already shown by a higher
-widget is left out of lower ones.
+widget is left out of lower ones; with "Hide watched movies" anything the
+source add-on marks as watched (playcount > 0) is left out.
 """
 import json
 import re
@@ -21,7 +22,7 @@ PROPERTIES = [
     "genre", "director", "writer", "studio", "country", "mpaa", "runtime", "premiered",
     "trailer", "imdbnumber", "uniqueid", "playcount", "art", "thumbnail", "fanart", "file",
 ]
-MINIMAL_PROPERTIES = ["title", "art", "thumbnail", "fanart", "file"]
+MINIMAL_PROPERTIES = ["title", "art", "thumbnail", "fanart", "file", "playcount"]
 # FanFilm: "?action=moviePage"; other add-ons usually label it "Next page" / "Następna strona"
 NEXT_PAGE_PATH = re.compile(r"action=\w*page\b", re.I)
 NEXT_PAGE_LABEL = re.compile(r"nast[eę]pn|next|dalej|>>|»|›", re.I)
@@ -53,8 +54,12 @@ def run(argv):
         for k in range(1, n):
             hidden.update(seen_keys(k, widgets[k - 1]))
 
+    hide_watched = xbmc.getCondVisibility("Skin.HasSetting(sc_hide_watched)")
+
     shown = set()
     for entry in entries:
+        if hide_watched and entry.get("filetype") != "directory" and int(entry.get("playcount") or 0) > 0:
+            continue
         key = movie_key(entry)
         if key and (key in shown or key in hidden):
             continue

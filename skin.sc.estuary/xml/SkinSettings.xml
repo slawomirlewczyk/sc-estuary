@@ -198,6 +198,13 @@
 					<onclick>Skin.ToggleSetting(sc_hide_duplicates)</onclick>
 					<onclick>RunScript(script.sc.widgets,reload)</onclick>
 				</control>
+				<control type="radiobutton" id="6116">
+					<label>- $LOCALIZE[31956]</label>
+					<include>DefaultSettingButton</include>
+					<selected>Skin.HasSetting(sc_hide_watched)</selected>
+					<onclick>Skin.ToggleSetting(sc_hide_watched)</onclick>
+					<onclick>RunScript(script.sc.widgets,reload)</onclick>
+				</control>
 				<control type="button" id="627">
 					<label>- $LOCALIZE[31176]</label>
 					<include>DefaultSettingButton</include>

@@ -21,7 +21,7 @@
 		</assets>
 	</extension>
 </addon>
-<addon id="script.sc.widgets" name="SC Widgets" version="1.2.0" provider-name="slawomirlewczyk">
+<addon id="script.sc.widgets" name="SC Widgets" version="1.3.0" provider-name="slawomirlewczyk">
 	<requires>
 		<import addon="xbmc.python" version="3.0.1"/>
 	</requires>
@@ -33,6 +33,8 @@
 	<extension point="xbmc.python.pluginsource" library="default.py">
 		<provides>video</provides>
 	</extension>
+	<!-- reloads widgets after playback (Hide watched movies) -->
+	<extension point="xbmc.service" library="service.py" start="login"/>
 	<extension point="xbmc.addon.metadata">
 		<summary lang="en_GB">Home screen widgets for SC Estuary</summary>
 		<summary lang="pl_PL">Widżety ekranu głównego dla SC Estuary</summary>
@@ -46,10 +48,10 @@
 		</assets>
 	</extension>
 </addon>
-<addon id="skin.sc.estuary" version="1.2.0" name="SC Estuary" provider-name="slawomirlewczyk (based on Estuary by phil65, Ichabod Fletchman)">
+<addon id="skin.sc.estuary" version="1.3.0" name="SC Estuary" provider-name="slawomirlewczyk (based on Estuary by phil65, Ichabod Fletchman)">
 	<requires>
 		<import addon="xbmc.gui" version="5.18.0"/>
-		<import addon="script.sc.widgets" version="1.2.0"/>
+		<import addon="script.sc.widgets" version="1.3.0"/>
 	</requires>
 	<extension point="xbmc.gui.skin" debugging="false">
 		<res width="1920" height="1440" aspect="4:3" default="false" folder="xml" />
