@@ -19,7 +19,7 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 
-from . import store
+from . import ratings, store
 
 PROPERTIES = [
     "title", "originaltitle", "year", "plot", "plotoutline", "tagline", "rating", "votes",
@@ -65,6 +65,12 @@ def run(argv):
             hidden.update(seen_keys(k, widgets[k - 1]))
 
     hide_watched = xbmc.getCondVisibility("Skin.HasSetting(sc_hide_watched)")
+    rating_data = None
+    if xbmc.getCondVisibility("Skin.HasSetting(sc_filmweb_ratings)"):
+        rating_data = ratings.load()
+        imdbs = [k[5:] for k in map(movie_key, entries) if k and k.startswith("imdb:")]
+        if ratings.missing(rating_data, imdbs):
+            store.request_refresh(["ratings"])  # looked up in the background
 
     shown = set()
     skipped = {"watched": 0, "duplicate": 0}
@@ -80,7 +86,7 @@ def run(argv):
             shown.add(key)
         url = entry["file"]
         is_folder = entry.get("filetype") == "directory"
-        xbmcplugin.addDirectoryItem(handle, url, to_listitem(entry, is_folder), is_folder)
+        xbmcplugin.addDirectoryItem(handle, url, to_listitem(entry, is_folder, rating_data), is_folder)
 
     watched_total = sum(1 for e in entries if int(e.get("playcount") or 0) > 0)
     store.log(f'widget {n} "{widget["label"]}": {len(entries)} items, {watched_total} marked watched '
@@ -168,7 +174,7 @@ def is_next_page(entry):
                 NEXT_PAGE_LABEL.search(entry.get("label", "")))
 
 
-def to_listitem(entry, is_folder):
+def to_listitem(entry, is_folder, rating_data=None):
     label = entry.get("label") or entry.get("title") or ""
     li = xbmcgui.ListItem(label, offscreen=True)
 
@@ -200,8 +206,20 @@ def to_listitem(entry, is_folder):
         value = entry.get(key)
         if value:
             setter(value if isinstance(value, list) else [value])
-    if entry.get("rating"):
-        tag.setRating(float(entry["rating"]), int(entry.get("votes") or 0) if str(entry.get("votes") or "0").isdigit() else 0)
+    votes = str(entry.get("votes") or "0").replace(",", "").replace(" ", "")
+    own = (float(entry["rating"]), int(votes) if votes.isdigit() else 0) if entry.get("rating") else None
+    extra = {}
+    key = movie_key(entry) or ""
+    if rating_data is not None and key.startswith("imdb:"):
+        extra = ratings.for_movie(rating_data, key[5:])
+    if extra:
+        # tile shows the default rating: Filmweb, else IMDb; the add-on's (TMDb) stays as extra
+        all_ratings = dict(extra)
+        if own:
+            all_ratings["tmdb"] = own
+        tag.setRatings(all_ratings, "filmweb" if "filmweb" in extra else "imdb")
+    elif own:
+        tag.setRating(own[0], own[1])
     if entry.get("runtime"):
         tag.setDuration(int(entry["runtime"]))
     if entry.get("playcount"):
@@ -209,7 +227,6 @@ def to_listitem(entry, is_folder):
     if entry.get("uniqueid"):
         tag.setUniqueIDs({k: str(v) for k, v in entry["uniqueid"].items() if v})
 
-    key = movie_key(entry) or ""
     if key.startswith("imdb:") and entry.get("file", "").startswith("plugin://plugin.video.fanfilm/"):
         imdb = key[5:]
         watched = int(entry.get("playcount") or 0) > 0

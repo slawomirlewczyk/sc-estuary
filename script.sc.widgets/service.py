@@ -14,7 +14,7 @@ import time
 import xbmc
 import xbmcgui
 
-from resources.lib import plugin, store
+from resources.lib import plugin, ratings, store
 
 AUTO_MIN_GAP = 30  # seconds between automatic full refreshes
 
@@ -50,6 +50,25 @@ def refresh(numbers):
     return changed
 
 
+def update_ratings(monitor):
+    """Filmweb / IMDb ratings for every movie in the saved widget lists."""
+    if not xbmc.getCondVisibility("Skin.HasSetting(sc_filmweb_ratings)"):
+        return
+    widgets = store.load()
+    movies = {}
+    for n, widget in enumerate(widgets, 1):
+        cached = store.load_entries(n, widget["paths"])
+        for entry in (cached[0] if cached else []):
+            key = plugin.movie_key(entry) or ""
+            if key.startswith("imdb:"):
+                movies.setdefault(key[5:], {"title": entry.get("title") or entry.get("label"),
+                                            "originaltitle": entry.get("originaltitle"),
+                                            "year": entry.get("year")})
+    if movies and ratings.update(movies, abort=monitor.abortRequested):
+        store.sync_skin(widgets)  # redraw tiles with the new ratings
+        store.log(f"ratings updated for {len(movies)} movies")
+
+
 def main():
     monitor = Monitor()
     player = xbmc.Player()
@@ -80,9 +99,12 @@ def main():
             continue
 
         notify = "notify" in requests
-        requests.discard("notify")
+        want_ratings = "ratings" in requests
+        requests -= {"notify", "ratings"}
         if requests:
             refresh(requests)
+        if requests or want_ratings:
+            update_ratings(monitor)
         if notify:
             xbmcgui.Dialog().notification(store.lang(32000), store.lang(32029))
 

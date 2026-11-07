@@ -1033,3 +1033,7 @@ msgstr ""
 msgctxt "#31956"
 msgid "Hide watched movies"
 msgstr ""
+
+msgctxt "#31957"
+msgid "Filmweb ratings (fallback: IMDb)"
+msgstr ""

@@ -50,6 +50,21 @@ dodatku na ekran główny, po „Odśwież widżety”). Widżety przeładowują
 wtedy, gdy coś się zmieniło. W menu kontekstowym filmu w widżecie są pozycje
 **Oznacz jako obejrzane / nieobejrzane (FanFilm)**.
 
+### Oceny z Filmweb
+
+Ustawienia skórki → Menu główne → Filmy → **Oceny z Filmweb (zapasowo IMDb)**,
+a w Ustawieniach skórki → Ogólne → ocena na kafelku ustaw na **Ocena**.
+Kafelek pokazuje ocenę Filmweb, a gdy filmu nie da się pewnie dopasować –
+ocenę IMDb, a gdy i jej brak – ocenę z dodatku (TMDb).
+
+- Filmweb: nieoficjalne endpointy JSON strony (`/api/v1/live/search`,
+  `/film/<id>/info`, `/film/<id>/rating`), 1 zapytanie/s, tylko w tle,
+  dopasowanie po tytule i roku (±1); wynik zapamiętany, oceny odświeżane co
+  tydzień. Endpointy mogą się zmienić – wtedy zostaje IMDb.
+- IMDb: oficjalny zbiór `title.ratings.tsv.gz` (użytek prywatny), czytany w
+  locie raz w tygodniu; zapisywane są tylko filmy z widżetów.
+- Dane: `userdata/addon_data/script.sc.widgets/ratings.json`.
+
 ### Zarządzanie
 
 **Zarządzaj widżetami Filmy** (menu boczne albo Ustawienia skórki → Menu

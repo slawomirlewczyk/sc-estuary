@@ -841,6 +841,10 @@ msgctxt "#31956"
 msgid "Hide watched movies"
 msgstr "Ukrywaj obejrzane filmy"
 
+msgctxt "#31957"
+msgid "Filmweb ratings (fallback: IMDb)"
+msgstr "Oceny z Filmweb (zapasowo IMDb)"
+
 #~ msgctxt "#31025"
 #~ msgid "No favourites found. You can add any item from media views to this list by using the context menu."
 #~ msgstr "Brak ulubionych. Możesz dodać dowolną pozycję do tej listy, z poziomu widoków mediów, przy użyciu menu kontekstowego."

@@ -1,3 +1,7 @@
+[B]SC Estuary 1.4.0[/B]
+- "Filmweb ratings (fallback: IMDb)" (Skin settings > Home > Movies):
+  widget tiles show the Filmweb rating, else IMDb, else the add-on's own
+
 [B]SC Estuary 1.3.0[/B]
 - "Hide watched movies" (Skin settings > Home > Movies): widgets skip movies
   the source add-on marks as watched; widgets reload by themselves after
