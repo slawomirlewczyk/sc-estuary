@@ -9,6 +9,8 @@ Skórka Estuary z Kodi 22 (Piers) z jednym dodatkiem: **dowolny folder z dodatku
 1. Ustawienia → System → Dodatki → włącz **Nieznane źródła**.
 2. Ustawienia → Menedżer plików → **Dodaj źródło** →
    `https://slawomirlewczyk.github.io/sc-estuary/`
+   (strona tylko do instalacji z ZIP; samo repozytorium czyta pliki z
+   raw.githubusercontent.com, bo Kodi nie odczytuje `.md5` z GitHub Pages)
 3. Dodatki → **Zainstaluj z pliku ZIP** → `repository.sc-x.y.z.zip`.
 4. Dodatki → **Instaluj z repozytorium** → SC Repository → Skórka → **SC Estuary**.
 
