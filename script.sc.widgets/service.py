@@ -1,11 +1,22 @@
-"""Reload widgets so "Hide watched movies" drops what was just watched.
+"""Background refresh of SC widgets.
 
-Triggers: playback stopped, the video library changed, or coming back to the
-home screen from an add-on list (where movies can be marked as watched).
+Widgets are drawn instantly from their saved lists; this service fetches fresh
+lists in the background and reloads the widgets only when something changed.
+
+Refresh triggers:
+- a widget drawn from a list older than plugin.STALE_AFTER (asks via a window property),
+- "Refresh widgets" and "Mark as watched" actions,
+- playback stopped / video library changed,
+- coming back to the home screen from an add-on list (movies may be marked there).
 """
-import xbmc
+import time
 
-from resources.lib import store
+import xbmc
+import xbmcgui
+
+from resources.lib import plugin, store
+
+AUTO_MIN_GAP = 30  # seconds between automatic full refreshes
 
 
 class Monitor(xbmc.Monitor):
@@ -18,31 +29,62 @@ class Monitor(xbmc.Monitor):
             self.pending = True
 
 
+def refresh(numbers):
+    """Re-fetch the given widgets ("all" = every widget); reload the skin if changed."""
+    widgets = store.load()
+    targets = range(1, len(widgets) + 1) if "all" in numbers else sorted(
+        int(n) for n in numbers if n.isdigit() and 1 <= int(n) <= len(widgets))
+    changed = False
+    for n in targets:
+        widget = widgets[n - 1]
+        fresh = plugin.widget_entries(widget)
+        if not fresh:
+            continue  # add-on failed or offline: keep showing the saved list
+        cached = store.load_entries(n, widget["paths"])
+        if cached is None or plugin.signature(cached[0]) != plugin.signature(fresh):
+            changed = True
+        store.save_entries(n, widget["paths"], fresh)
+    if changed:
+        store.sync_skin(widgets)  # widgets reload, drawn from the fresh lists
+    store.log(f"background refresh {sorted(numbers)}: {'changed' if changed else 'no changes'}")
+    return changed
+
+
 def main():
     monitor = Monitor()
     player = xbmc.Player()
     was_in_addon_list = False
+    last_auto = 0.0
     while not monitor.abortRequested():
         if monitor.waitForAbort(1):
             break
+
+        on_home = xbmc.getCondVisibility("Window.IsActive(home)")
         in_addon_list = xbmc.getCondVisibility(
             "Window.IsActive(videos) + !String.IsEmpty(Container.PluginName)")
-        if was_in_addon_list and xbmc.getCondVisibility("Window.IsActive(home)"):
+        if was_in_addon_list and on_home:
             monitor.pending = True  # back on Home after browsing an add-on
-        was_in_addon_list = in_addon_list or (was_in_addon_list and
-                                              not xbmc.getCondVisibility("Window.IsActive(home)"))
-        if not monitor.pending or player.isPlaying():
+        was_in_addon_list = in_addon_list or (was_in_addon_list and not on_home)
+
+        if player.isPlaying():
             continue
-        # give the source add-on (e.g. FanFilm) time to save the watched mark
-        if monitor.waitForAbort(3):
-            break
-        monitor.pending = False
-        if xbmc.getCondVisibility("Skin.HasSetting(sc_hide_watched)"):
-            widgets = store.load()
-            if widgets:
-                store.clear_seen()
-                store.sync_skin(widgets)
-                store.log("widgets reloaded (watched marks may have changed)")
+
+        requests = store.take_refresh_requests()
+        if monitor.pending and time.time() - last_auto > AUTO_MIN_GAP:
+            monitor.pending = False
+            if monitor.waitForAbort(2):  # let the add-on save its watched mark
+                break
+            requests.add("all")
+            last_auto = time.time()
+        if not requests:
+            continue
+
+        notify = "notify" in requests
+        requests.discard("notify")
+        if requests:
+            refresh(requests)
+        if notify:
+            xbmcgui.Dialog().notification(store.lang(32000), store.lang(32029))
 
 
 if __name__ == "__main__":

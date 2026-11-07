@@ -96,3 +96,15 @@ msgstr "Odśwież widżety"
 msgctxt "#32029"
 msgid "Widgets refreshed"
 msgstr "Widżety odświeżone"
+
+msgctxt "#32030"
+msgid "Mark as watched (FanFilm)"
+msgstr "Oznacz jako obejrzane (FanFilm)"
+
+msgctxt "#32031"
+msgid "Mark as unwatched (FanFilm)"
+msgstr "Oznacz jako nieobejrzane (FanFilm)"
+
+msgctxt "#32032"
+msgid "Refreshing widgets in the background…"
+msgstr "Odświeżanie widżetów w tle…"

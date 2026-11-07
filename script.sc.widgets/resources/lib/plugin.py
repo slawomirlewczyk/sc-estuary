@@ -6,6 +6,10 @@ JSON-RPC Files.GetDirectory and the results are joined into one list.
 With the skin setting "Hide duplicate movies" a movie already shown by a higher
 widget is left out of lower ones; with "Hide watched movies" anything the
 source add-on marks as watched (playcount > 0) is left out.
+
+Speed: a widget is drawn at once from the list saved last time; if that list is
+older than STALE_AFTER the service fetches a fresh one in the background and
+reloads the widgets only when something changed.
 """
 import json
 import re
@@ -45,8 +49,14 @@ def run(argv):
     xbmcplugin.setContent(handle, "movies")
     xbmcplugin.setPluginCategory(handle, widget["label"])
 
-    entries = widget_entries(widget)
-    store.save_seen(n, widget["paths"], [k for k in map(movie_key, entries) if k])
+    cached = store.load_entries(n, widget["paths"])
+    if cached is None:
+        entries = widget_entries(widget)  # first time: nothing saved yet, fetch now
+        store.save_entries(n, widget["paths"], entries)
+    else:
+        entries, age = cached
+        if age > STALE_AFTER:
+            store.request_refresh([n])  # draw now, refresh in the background
 
     # "Hide duplicate movies": skip anything an earlier (higher) widget already shows
     hidden = set()
@@ -92,13 +102,23 @@ def widget_entries(widget):
     return result
 
 
+STALE_AFTER = 2 * 60  # seconds before a saved widget list is refreshed in the background
+
+
 def seen_keys(k, widget):
-    """Movie keys of widget k: from the short-lived cache, else fetched now."""
-    keys = store.load_seen(k, widget["paths"])
-    if keys is None:
-        keys = [key for key in map(movie_key, widget_entries(widget)) if key]
-        store.save_seen(k, widget["paths"], keys)
-    return keys
+    """Movie keys of widget k, from its saved list (fetched now if never saved)."""
+    cached = store.load_entries(k, widget["paths"])
+    if cached is None:
+        entries = widget_entries(widget)
+        store.save_entries(k, widget["paths"], entries)
+    else:
+        entries = cached[0]
+    return [key for key in map(movie_key, entries) if key]
+
+
+def signature(entries):
+    """What the widget shows; FanFilm play URLs carry a per-call t=, so not the URL."""
+    return [(movie_key(e) or e.get("label"), int(e.get("playcount") or 0)) for e in entries]
 
 
 IMDB_RE = re.compile(r"[?&]imdb=(tt\d+)")
@@ -188,6 +208,15 @@ def to_listitem(entry, is_folder):
         tag.setPlaycount(int(entry["playcount"]))
     if entry.get("uniqueid"):
         tag.setUniqueIDs({k: str(v) for k, v in entry["uniqueid"].items() if v})
+
+    key = movie_key(entry) or ""
+    if key.startswith("imdb:") and entry.get("file", "").startswith("plugin://plugin.video.fanfilm/"):
+        imdb = key[5:]
+        watched = int(entry.get("playcount") or 0) > 0
+        li.addContextMenuItems([(
+            store.lang(32031 if watched else 32030),
+            f"RunScript(script.sc.widgets,fanfilm_playcount,{imdb},{6 if watched else 7})",
+        )])
 
     if not is_folder:
         # The source add-on was called from outside its own window, so (like FanFilm)

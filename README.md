@@ -42,6 +42,14 @@ Opcja Kodi „Ukryj obejrzane” działa tylko w oknie listy, nie w widżetach,
 dlatego skórka ma własną. Korzysta z oznaczeń dodatku (FanFilm: lokalnie
 albo z Trakt).
 
+### Szybkie ładowanie
+
+Widżet od razu pokazuje listę zapamiętaną poprzednio, a nową pobiera w tle
+(gdy zapamiętana ma ponad 2 minuty, po obejrzeniu filmu, po powrocie z listy
+dodatku na ekran główny, po „Odśwież widżety”). Widżety przeładowują się tylko
+wtedy, gdy coś się zmieniło. W menu kontekstowym filmu w widżecie są pozycje
+**Oznacz jako obejrzane / nieobejrzane (FanFilm)**.
+
 ### Zarządzanie
 
 **Zarządzaj widżetami Filmy** (menu boczne albo Ustawienia skórki → Menu

@@ -96,3 +96,15 @@ msgstr ""
 msgctxt "#32029"
 msgid "Widgets refreshed"
 msgstr ""
+
+msgctxt "#32030"
+msgid "Mark as watched (FanFilm)"
+msgstr ""
+
+msgctxt "#32031"
+msgid "Mark as unwatched (FanFilm)"
+msgstr ""
+
+msgctxt "#32032"
+msgid "Refreshing widgets in the background…"
+msgstr ""

@@ -15,6 +15,7 @@ import time
 
 import xbmc
 import xbmcaddon
+import xbmcgui
 import xbmcvfs
 
 ADDON = xbmcaddon.Addon("script.sc.widgets")
@@ -23,8 +24,7 @@ SLOTS = 20  # widget rows defined in the skin's Home.xml
 DEFAULT_MAX = 20
 DATA_DIR = xbmcvfs.translatePath(f"special://profile/addon_data/{ADDON_ID}/")
 DATA_FILE = os.path.join(DATA_DIR, "widgets.json")
-SEEN_DIR = os.path.join(DATA_DIR, "seen")
-SEEN_TTL = 10 * 60  # seconds a widget's movie list is reused for duplicate hiding
+CACHE_DIR = os.path.join(DATA_DIR, "cache")  # last list of each widget
 
 
 def log(msg, level=xbmc.LOGINFO):
@@ -102,41 +102,62 @@ def _migrate_v1():
     return widgets
 
 
-def _seen_file(n):
-    return os.path.join(SEEN_DIR, f"w{n}.json")
+
+def _cache_file(n):
+    return os.path.join(CACHE_DIR, f"w{n}.json")
 
 
 def _paths_sig(paths):
     return hashlib.sha1("\n".join(paths).encode("utf-8")).hexdigest()
 
 
-def save_seen(n, paths, keys):
-    """Remember which movies widget n shows, for duplicate hiding in lower widgets."""
+def save_entries(n, paths, entries):
+    """Save what widget n lists, so it can be drawn instantly next time."""
     try:
-        os.makedirs(SEEN_DIR, exist_ok=True)
-        tmp = _seen_file(n) + ".tmp"
+        os.makedirs(CACHE_DIR, exist_ok=True)
+        tmp = _cache_file(n) + ".tmp"
         with open(tmp, "w", encoding="utf-8") as f:
-            json.dump({"sig": _paths_sig(paths), "time": time.time(), "keys": keys}, f)
-        os.replace(tmp, _seen_file(n))
+            json.dump({"sig": _paths_sig(paths), "time": time.time(), "entries": entries}, f)
+        os.replace(tmp, _cache_file(n))
     except OSError as e:
-        log(f"cannot write seen list {n}: {e}", xbmc.LOGWARNING)
+        log(f"cannot save widget {n}: {e}", xbmc.LOGWARNING)
 
 
-def load_seen(n, paths):
-    """Movie keys of widget n if saved recently for the same pages, else None."""
+def load_entries(n, paths):
+    """(entries, age in seconds) saved for widget n with the same pages, else None."""
     try:
-        with open(_seen_file(n), encoding="utf-8") as f:
+        with open(_cache_file(n), encoding="utf-8") as f:
             data = json.load(f)
     except (OSError, ValueError):
         return None
-    if data.get("sig") != _paths_sig(paths) or time.time() - data.get("time", 0) > SEEN_TTL:
+    if data.get("sig") != _paths_sig(paths):
         return None
-    return data.get("keys") or []
+    return data.get("entries") or [], time.time() - data.get("time", 0)
 
 
-def clear_seen():
+def clear_cache():
     try:
-        for name in os.listdir(SEEN_DIR):
-            os.remove(os.path.join(SEEN_DIR, name))
+        for name in os.listdir(CACHE_DIR):
+            os.remove(os.path.join(CACHE_DIR, name))
     except OSError:
         pass
+
+
+REFRESH_PROP = "sc_widgets_refresh"
+
+
+def request_refresh(numbers, notify=False):
+    """Ask the service to re-fetch widgets in the background ("all" or numbers)."""
+    win = xbmcgui.Window(10000)
+    queued = set(filter(None, win.getProperty(REFRESH_PROP).split(",")))
+    queued.update(str(n) for n in numbers)
+    if notify:
+        queued.add("notify")
+    win.setProperty(REFRESH_PROP, ",".join(sorted(queued)))
+
+
+def take_refresh_requests():
+    win = xbmcgui.Window(10000)
+    queued = set(filter(None, win.getProperty(REFRESH_PROP).split(",")))
+    win.clearProperty(REFRESH_PROP)
+    return queued

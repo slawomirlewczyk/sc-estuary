@@ -1,4 +1,4 @@
-"""Skin actions: RunScript(script.sc.widgets,add|manage|setmax|refresh|reload)."""
+"""Skin actions: RunScript(script.sc.widgets,add|manage|setmax|refresh|reload|fanfilm_playcount)."""
 import xbmc
 import xbmcgui
 
@@ -7,7 +7,7 @@ from . import store
 L = store.lang
 
 
-def run(action):
+def run(action, args=()):
     if action == "add":
         add_current_folder()
     elif action == "setmax":
@@ -16,6 +16,8 @@ def run(action):
         refresh()
     elif action == "reload":
         store.sync_skin(store.load())  # e.g. after toggling "Hide duplicate movies"
+    elif action == "fanfilm_playcount" and len(args) == 2:
+        fanfilm_playcount(*args)
     elif action == "migrate":
         store.load()  # converts SC Estuary 1.0.0 skin strings on first read
     else:
@@ -140,7 +142,8 @@ CACHE_CLEARERS = {
 
 
 def refresh():
-    """Clear source add-on caches (FanFilm asks to confirm), then reload all widgets."""
+    """Clear source add-on caches (FanFilm asks to confirm), then re-fetch all widgets
+    in the background; the widgets keep showing their saved lists meanwhile."""
     widgets = store.load()
     sources = {p.split("/")[2] for w in widgets for p in w["paths"] if p.startswith("plugin://")}
     monitor = xbmc.Monitor()
@@ -148,9 +151,18 @@ def refresh():
         if addon_id in sources and xbmc.getCondVisibility(f"System.AddonIsEnabled({addon_id})"):
             xbmc.executebuiltin(f"RunPlugin({url})")
             _wait_for_confirmation(monitor)
-    store.clear_seen()
-    store.sync_skin(widgets)  # new token in every widget path -> Kodi reloads them
-    xbmcgui.Dialog().notification(L(32000), L(32029))
+    store.request_refresh(["all"], notify=True)
+    xbmcgui.Dialog().notification(L(32000), L(32032))
+
+
+def fanfilm_playcount(imdb, query):
+    """Widget context menu: mark in FanFilm (7 = watched, 6 = unwatched), then refresh."""
+    if not imdb.startswith("tt") or query not in ("6", "7"):
+        return
+    xbmc.executebuiltin(
+        f"RunPlugin(plugin://plugin.video.fanfilm/?action=moviePlaycount&imdb={imdb}&query={query})")
+    xbmc.Monitor().waitForAbort(2)  # FanFilm saves the mark asynchronously
+    store.request_refresh(["all"])
 
 
 def _wait_for_confirmation(monitor):
