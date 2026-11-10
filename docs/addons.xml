@@ -21,7 +21,7 @@
 		</assets>
 	</extension>
 </addon>
-<addon id="script.sc.widgets" name="SC Widgets" version="1.6.5" provider-name="slawomirlewczyk">
+<addon id="script.sc.widgets" name="SC Widgets" version="1.6.6" provider-name="slawomirlewczyk">
 	<requires>
 		<import addon="xbmc.python" version="3.0.1"/>
 	</requires>
@@ -48,10 +48,10 @@
 		</assets>
 	</extension>
 </addon>
-<addon id="skin.sc.estuary" version="1.5.3" name="SC Estuary" provider-name="slawomirlewczyk (based on Estuary by phil65, Ichabod Fletchman)">
+<addon id="skin.sc.estuary" version="1.5.4" name="SC Estuary" provider-name="slawomirlewczyk (based on Estuary by phil65, Ichabod Fletchman)">
 	<requires>
 		<import addon="xbmc.gui" version="5.18.0"/>
-		<import addon="script.sc.widgets" version="1.6.5"/>
+		<import addon="script.sc.widgets" version="1.6.6"/>
 	</requires>
 	<extension point="xbmc.gui.skin" debugging="false">
 		<res width="1920" height="1440" aspect="4:3" default="false" folder="xml" />

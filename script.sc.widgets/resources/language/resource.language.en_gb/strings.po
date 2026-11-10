@@ -105,3 +105,7 @@ msgctxt "#32033"
 msgid "Diagnostics (watched movies)"
 msgstr ""
 
+
+msgctxt "#32036"
+msgid "Next page"
+msgstr ""

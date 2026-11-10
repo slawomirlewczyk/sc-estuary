@@ -1,3 +1,7 @@
+[B]SC Estuary 1.5.4[/B]
+- joined widgets: the last tile goes to the next page again, not back to the
+  previous one (FanFilm lists for widgets carry only a "previous page" tile)
+
 [B]SC Estuary 1.5.3[/B]
 - removed "Mark as watched / unwatched (FanFilm)" from the widget context
   menu and its notification; mark movies in FanFilm instead

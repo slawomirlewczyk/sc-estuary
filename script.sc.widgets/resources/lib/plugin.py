@@ -16,7 +16,7 @@ reloads the widgets only when something changed.
 """
 import json
 import re
-from urllib.parse import parse_qs
+from urllib.parse import parse_qs, parse_qsl, urlencode, urlsplit, urlunsplit
 
 import xbmc
 import xbmcgui
@@ -96,9 +96,8 @@ def run(argv):
     sort_by_rating = xbmc.getCondVisibility("Skin.HasSetting(sc_sort_rating)")
     if sort_by_rating:
         movies.sort(key=lambda e: sort_rating(e, rating_data), reverse=True)  # stable: ties keep order
-    # folders go after the movies; a joined widget keeps only the last page's "next page"
-    if len(widget["paths"]) > 1:
-        folders = folders[-1:]
+    # folders go after the movies; a paged widget keeps one "next page" tile
+    folders = page_folders(widget["paths"], folders)
     for entry in movies + folders:
         is_folder = is_folder_entry(entry)
         li = to_listitem(entry, is_folder, rating_data, not is_folder and is_watched(entry, watched_ids))
@@ -125,6 +124,65 @@ def widget_entries(widget):
                 continue
             result.append(entry)
     return result
+
+
+def split_page(url):
+    """(address without the page, page number, how it is written: "query", "path" or None).
+
+    FanFilm 2026 writes pages as a last path segment (/movies/popular/2) or as
+    ?page=2; an address without a number is page 1.
+    """
+    parts = urlsplit(url or "")
+    query = parse_qsl(parts.query, keep_blank_values=True)
+    pages = [v for k, v in query if k == "page" and v.isdigit()]
+    if pages:
+        rest = urlencode([(k, v) for k, v in query if k != "page"])
+        return urlunsplit(parts._replace(query=rest)), int(pages[0]), "query"
+    m = re.search(r"/(\d+)/?$", parts.path)
+    if m:
+        return urlunsplit(parts._replace(path=parts.path[:m.start()])), int(m.group(1)), "path"
+    return urlunsplit(parts), 1, None
+
+
+def make_page(base, page, style):
+    parts = urlsplit(base)
+    if style == "query":
+        query = parse_qsl(parts.query, keep_blank_values=True) + [("page", str(page))]
+        return urlunsplit(parts._replace(query=urlencode(query)))
+    return urlunsplit(parts._replace(path=f"{parts.path.rstrip('/')}/{page}"))
+
+
+def page_folders(paths, folders):
+    """Folder tiles to show after the movies.
+
+    FanFilm 2026 called from a widget puts a "previous page" tile where "next
+    page" would be (unless its widgets_nextpage setting is on). When the
+    widget's pages or tiles show how pages are numbered, keep only a tile that
+    goes past the last page, or build one; otherwise keep the last page's tile.
+    """
+    base, last, style = split_page(paths[-1])
+
+    def page_in(url):
+        """Page of url within base (base itself is page 1), else None."""
+        if (url or "").rstrip("/") == base.rstrip("/"):
+            return 1
+        b, page, _ = split_page(url)
+        return page if b == base else None
+
+    others = list(paths[:-1]) + [f.get("file") for f in folders]
+    same = [u for u in others if page_in(u) is not None]
+    if not same:
+        return folders[-1:] if len(paths) > 1 else folders  # e.g. FanFilm 2023: next page only
+    forward = [f for f in folders if (page_in(f.get("file")) or 0) > last]
+    if forward:
+        return forward[-1:]
+    style = style or next((split_page(u)[2] for u in same if split_page(u)[0] == base and split_page(u)[2]), "path")
+    art = {}
+    if folders:  # reuse FanFilm's arrow art, pointing forward
+        art = {k: v.replace("poster_prev", "poster_next").replace("landscape_prev", "landscape")
+               for k, v in (folders[-1].get("art") or {}).items()}
+    return [{"file": make_page(base, last + 1, style), "filetype": "directory",
+             "label": store.lang(32036), "art": art}]
 
 
 STALE_AFTER = 2 * 60  # seconds before a saved widget list is refreshed in the background
