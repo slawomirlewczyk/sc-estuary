@@ -1,4 +1,4 @@
-"""Skin actions: RunScript(script.sc.widgets,add|manage|setmax|refresh|reload|fanfilm_playcount)."""
+"""Skin actions: RunScript(script.sc.widgets,add|manage|setmax|refresh|reload|fanfilm_playcount|diagnose)."""
 import xbmc
 import xbmcgui
 
@@ -18,6 +18,9 @@ def run(action, args=()):
         store.sync_skin(store.load())  # e.g. after toggling "Hide duplicate movies"
     elif action == "fanfilm_playcount" and len(args) == 2:
         fanfilm_playcount(*args)
+    elif action == "diagnose":
+        from . import diagnose
+        diagnose.run()
     elif action == "migrate":
         store.load()  # converts SC Estuary 1.0.0 skin strings on first read
     else:
@@ -79,14 +82,18 @@ def manage():
         if not widgets:
             xbmcgui.Dialog().ok(L(32000), L(32019))
             return
-        options = [f"[B]{L(32028)}[/B]"] + [describe(w) for w in widgets]
+        options = [f"[B]{L(32028)}[/B]", L(32033)] + [describe(w) for w in widgets]
         choice = xbmcgui.Dialog().select(L(32002), options)
         if choice < 0:
             return
         if choice == 0:
             refresh()
             return
-        manage_widget(widgets, choice - 1)
+        if choice == 1:
+            from . import diagnose
+            diagnose.run()
+            continue
+        manage_widget(widgets, choice - 2)
 
 
 def manage_widget(widgets, i):

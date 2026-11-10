@@ -85,7 +85,9 @@ oceny dochodzą w tle.
 **Zarządzaj widżetami Filmy** (menu boczne albo Ustawienia skórki → Menu
 główne → Filmy): zmiana nazwy, kolejność, usunięcie ostatniej strony,
 usunięcie widżetu, a na górze listy **Odśwież widżety** (czyści pamięć
-FanFilm i przeładowuje widżety bez restartu Kodi). W ustawieniach skórki jest
+FanFilm i przeładowuje widżety bez restartu Kodi). Druga pozycja, **Diagnostyka
+(obejrzane filmy)**, pokazuje, co o obejrzanych filmach mówi każde źródło
+(zapis też w logu Kodi i w `addon_data/script.sc.widgets/diagnostics.txt`). W ustawieniach skórki jest
 też **Maksymalna liczba widżetów** (1–20).
 
 Logika widżetów jest w dodatku `script.sc.widgets` (instaluje się razem ze

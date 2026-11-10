@@ -108,3 +108,7 @@ msgstr "Oznacz jako nieobejrzane (FanFilm)"
 msgctxt "#32032"
 msgid "Refreshing widgets in the background…"
 msgstr "Odświeżanie widżetów w tle…"
+
+msgctxt "#32033"
+msgid "Diagnostics (watched movies)"
+msgstr "Diagnostyka (obejrzane filmy)"

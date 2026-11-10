@@ -27,7 +27,7 @@ from . import ratings, store, watched
 PROPERTIES = [
     "title", "originaltitle", "year", "plot", "plotoutline", "tagline", "rating", "votes",
     "genre", "director", "writer", "studio", "country", "mpaa", "runtime", "premiered",
-    "trailer", "imdbnumber", "uniqueid", "playcount", "art", "thumbnail", "fanart", "file",
+    "trailer", "imdbnumber", "uniqueid", "playcount", "lastplayed", "resume", "art", "thumbnail", "fanart", "file",
 ]
 MINIMAL_PROPERTIES = ["title", "art", "thumbnail", "fanart", "file", "playcount"]
 # FanFilm's "next page" link: "?action=moviePage"

@@ -108,3 +108,7 @@ msgstr ""
 msgctxt "#32032"
 msgid "Refreshing widgets in the background…"
 msgstr ""
+
+msgctxt "#32033"
+msgid "Diagnostics (watched movies)"
+msgstr ""
