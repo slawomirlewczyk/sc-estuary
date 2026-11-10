@@ -136,11 +136,15 @@ def imdb_ratings(wanted, abort=lambda: False):
     found = {}
     req = urllib.request.Request(IMDB_DATASET, headers={"User-Agent": HEADERS["User-Agent"]})
     with urllib.request.urlopen(req, timeout=60) as resp, gzip.GzipFile(fileobj=resp) as gz:
+        wanted_bytes = {w.encode() for w in wanted}
         for line_no, raw in enumerate(gz):
-            if line_no % 200000 == 0 and abort():
-                break
-            tconst = raw[:raw.find(b"\t")].decode()
-            if tconst in wanted:
+            if line_no % 20000 == 0:
+                if abort():
+                    break
+                time.sleep(0.02)  # Kodi add-ons share one Python lock: let the others run
+            tconst = raw[:raw.find(b"\t")]
+            if tconst in wanted_bytes:
+                tconst = tconst.decode()
                 _, rate, votes = raw.decode().rstrip("\n").split("\t")
                 found[tconst] = [float(rate), int(votes)]
                 if len(found) == len(wanted):

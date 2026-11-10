@@ -18,6 +18,7 @@ import time
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 import xbmc
+import xbmcgui
 import xbmcvfs
 
 from . import store
@@ -95,6 +96,7 @@ def mark(imdb, watched=True):
     except OSError as e:
         store.log(f"cannot save {OWN_FILE}: {e}", xbmc.LOGWARNING)
         return False
+    forget_memo()
     store.log(f"{imdb} marked {'watched' if watched else 'unwatched'}")
     return True
 
@@ -134,9 +136,35 @@ def library_ids():
     return ids
 
 
-def all_ids():
+MEMO_PROP = "sc_widgets_watched_memo"
+MEMO_TTL = 20  # seconds: the 20 widgets drawn at once share one lookup
+
+
+def all_ids(fresh=False):
     """Every movie known as watched (without the add-on's own playcount):
-    IMDb ids, plus "url:<normalized URL>" for plugin files Kodi marked."""
+    IMDb ids, plus "url:<normalized URL>" for plugin files Kodi marked.
+
+    The result is shared between processes via a home window property for
+    MEMO_TTL seconds; fresh=True always looks it up (and updates the share).
+    """
+    win = xbmcgui.Window(10000)
+    if not fresh:
+        try:
+            memo = json.loads(win.getProperty(MEMO_PROP) or "{}")
+            if time.time() - memo.get("time", 0) < MEMO_TTL:
+                return set(memo.get("ids") or [])
+        except ValueError:
+            pass
+    ids = _lookup()
+    win.setProperty(MEMO_PROP, json.dumps({"time": time.time(), "ids": sorted(ids)}))
+    return ids
+
+
+def forget_memo():
+    xbmcgui.Window(10000).clearProperty(MEMO_PROP)
+
+
+def _lookup():
     ids = set(load_own()) | metahandler_ids() | library_ids()
     for url in kodi_db_plugin_files():
         ids.add(URL_PREFIX + normalize_url(url))

@@ -55,9 +55,11 @@ dlatego skórka ma własną. Film jest uznany za obejrzany, gdy:
 ### Szybkie ładowanie
 
 Widżet od razu pokazuje listę zapamiętaną poprzednio, a nową pobiera w tle
-(gdy zapamiętana ma ponad 2 minuty, po obejrzeniu filmu, po powrocie z listy
-dodatku na ekran główny, po „Odśwież widżety”). Widżety przeładowują się tylko
-wtedy, gdy coś się zmieniło.
+(gdy zapamiętana ma ponad 15 minut, po obejrzeniu filmu, po powrocie z listy
+dodatku na ekran główny, po „Odśwież widżety”). Przez pierwsze 2 minuty po
+starcie Kodi nic nie jest pobierane w tle (poza ręcznym „Odśwież widżety”),
+a widżety są pobierane po kolei z przerwami, żeby Kodi nie przycinało.
+Przeładowuje się tylko widżet, który się zmienił.
 
 ### Oceny z Filmweb
 

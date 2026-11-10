@@ -16,6 +16,7 @@ reloads the widgets only when something changed.
 """
 import json
 import re
+import time
 from urllib.parse import parse_qs, parse_qsl, urlencode, urlsplit, urlunsplit
 
 import xbmc
@@ -35,6 +36,7 @@ NEXT_PAGE_PATH = re.compile(r"action=\w*page\b", re.I)
 
 
 def run(argv):
+    started = time.time()
     handle = int(argv[1])
     query = parse_qs(argv[2].lstrip("?"))
     try:
@@ -108,7 +110,7 @@ def run(argv):
     store.event(f'widget {n} "{widget["label"]}": {len(entries)} items, {watched_total} watched '
               f'({by_addon} marked by the add-on), hidden: {skipped["watched"]} watched, {skipped["duplicate"]} duplicate '
               f'(hide watched={hide_watched}, hide duplicates={bool(hidden) or None}, '
-              f'sort by rating={sort_by_rating}, folders shown={len(folders)})')
+              f'sort by rating={sort_by_rating}, folders shown={len(folders)}, {time.time() - started:.2f} s)')
     xbmcplugin.endOfDirectory(handle, cacheToDisc=False)
 
 
@@ -185,18 +187,33 @@ def page_folders(paths, folders):
              "label": store.lang(32036), "art": art}]
 
 
-STALE_AFTER = 2 * 60  # seconds before a saved widget list is refreshed in the background
+STALE_AFTER = 15 * 60  # seconds before a saved widget list is refreshed in the background
+KEYS_PROP = "sc_widgets_keys_{}"  # movie keys of widget n, shared between draws
 
 
 def seen_keys(k, widget):
-    """Movie keys of widget k, from its saved list (fetched now if never saved)."""
+    """Movie keys of widget k, from its saved list (fetched now if never saved).
+
+    Kept in a home window property while the saved list is unchanged, so lower
+    widgets do not each parse every higher widget's list.
+    """
+    win = xbmcgui.Window(10000)
+    mtime = store.entries_mtime(k)
+    try:
+        memo = json.loads(win.getProperty(KEYS_PROP.format(k)) or "{}")
+        if mtime is not None and memo.get("mtime") == mtime:
+            return memo.get("keys") or []
+    except ValueError:
+        pass
     cached = store.load_entries(k, widget["paths"])
     if cached is None:
         entries = widget_entries(widget)
         store.save_entries(k, widget["paths"], entries)
     else:
         entries = cached[0]
-    return [key for key in map(movie_key, entries) if key]
+    keys = [key for key in map(movie_key, entries) if key]
+    win.setProperty(KEYS_PROP.format(k), json.dumps({"mtime": store.entries_mtime(k), "keys": keys}))
+    return keys
 
 
 def signature(entries):

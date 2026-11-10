@@ -1,3 +1,12 @@
+[B]SC Estuary 1.5.5[/B]
+- faster, smoother start: no background widget refresh during the first
+  2 minutes, saved lists refreshed after 15 minutes (was 2), widgets fetched
+  one by one with pauses and paused during playback
+- only the widget that changed is reloaded (plus the ones below it when
+  hiding duplicates)
+- widgets drawn together share one watched lookup and the duplicate list
+- weekly IMDb ratings scan lets other add-ons run and stops for playback
+
 [B]SC Estuary 1.5.4[/B]
 - joined widgets: the last tile goes to the next page again, not back to the
   previous one (FanFilm lists for widgets carry only a "previous page" tile)

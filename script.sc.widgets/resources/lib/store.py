@@ -89,9 +89,14 @@ def save(widgets):
     sync_skin(widgets)
 
 
-def sync_skin(widgets):
+def sync_skin(widgets, only=None):
+    """Point the skin at the widgets; with only = slot numbers, reload just those."""
     token = str(int(time.time() * 1000))
     for n in range(1, SLOTS + 1):
+        if only is not None:
+            if n in only and n <= len(widgets):
+                xbmc.executebuiltin(f'Skin.SetString(sc_mw{n}_path,"plugin://{ADDON_ID}/?w={n}&t={token}")')
+            continue
         if n <= len(widgets):
             path = f"plugin://{ADDON_ID}/?w={n}&t={token}"
             xbmc.executebuiltin(f'Skin.SetString(sc_mw{n}_path,"{path}")')
@@ -150,6 +155,13 @@ def save_entries(n, paths, entries):
         os.replace(tmp, _cache_file(n))
     except OSError as e:
         log(f"cannot save widget {n}: {e}", xbmc.LOGWARNING)
+
+
+def entries_mtime(n):
+    try:
+        return os.path.getmtime(_cache_file(n))
+    except OSError:
+        return None
 
 
 def load_entries(n, paths):

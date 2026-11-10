@@ -38,7 +38,7 @@ def run():
     add(f"Kodi video db {watched.kodi_db_file()}: watched plugin files={len(kodi_files)}")
     add(f"own marks file: {watched.OWN_FILE} exists={os.path.exists(watched.OWN_FILE)}, "
         f"data dir writable={os.access(store.DATA_DIR, os.W_OK)}")
-    ids = watched.all_ids()
+    ids = watched.all_ids(fresh=True)
     events = store.recent_events()
     add("")
     add(f"== last events ({len(events)})")
