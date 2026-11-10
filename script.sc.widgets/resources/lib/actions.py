@@ -1,8 +1,8 @@
-"""Skin actions: RunScript(script.sc.widgets,add|manage|setmax|refresh|reload|fanfilm_playcount|diagnose)."""
+"""Skin actions: RunScript(script.sc.widgets,add|manage|setmax|refresh|reload|diagnose)."""
 import xbmc
 import xbmcgui
 
-from . import store, watched
+from . import store
 
 L = store.lang
 
@@ -16,8 +16,6 @@ def run(action, args=()):
         refresh()
     elif action == "reload":
         store.sync_skin(store.load())  # e.g. after toggling "Hide duplicate movies"
-    elif action == "fanfilm_playcount" and len(args) == 2:
-        fanfilm_playcount(*args)
     elif action == "diagnose":
         from . import diagnose
         diagnose.run()
@@ -160,22 +158,6 @@ def refresh():
             _wait_for_confirmation(monitor)
     store.request_refresh(["all"], notify=True)
     xbmcgui.Dialog().notification(L(32000), L(32032))
-
-
-def fanfilm_playcount(imdb, query):
-    """Widget context menu: mark in FanFilm (7 = watched, 6 = unwatched), then refresh."""
-    if not imdb.startswith("tt") or query not in ("6", "7"):
-        store.event(f"fanfilm_playcount: bad arguments {imdb!r} {query!r}")
-        return
-    watched.mark(imdb, query == "7")  # FanFilm in local mode does not report it in lists
-    saved = (imdb in watched.load_own()) == (query == "7")
-    store.event(f"fanfilm_playcount {imdb} query={query}: saved={saved}")
-    if query == "7":
-        xbmcgui.Dialog().notification(L(32000), L(32034 if saved else 32035).format(imdb))
-    xbmc.executebuiltin(
-        f"RunPlugin(plugin://plugin.video.fanfilm/?action=moviePlaycount&imdb={imdb}&query={query})")
-    xbmc.Monitor().waitForAbort(2)  # FanFilm saves the mark asynchronously
-    store.request_refresh(["all"])
 
 
 def _wait_for_confirmation(monitor):

@@ -1,3 +1,7 @@
+[B]SC Estuary 1.5.3[/B]
+- removed "Mark as watched / unwatched (FanFilm)" from the widget context
+  menu and its notification; mark movies in FanFilm instead
+
 [B]SC Estuary 1.5.2[/B]
 - "Hide watched movies" also uses Kodi's own watched marks of add-on movies
   (what the FanFilm window shows), which add-on lists for widgets leave out

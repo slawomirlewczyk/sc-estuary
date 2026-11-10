@@ -45,7 +45,7 @@ dlatego skórka ma własną. Film jest uznany za obejrzany, gdy:
   FanFilm zawsze podaje „nieobejrzany”),
 - FanFilm zapisał go lokalnie jako obejrzany (baza `script.module.metahandler`,
   `meta_cache/video_cache.db`),
-- został odtworzony w ≥ 85 % albo oznaczony z menu kontekstowego widżetu
+- został odtworzony w ≥ 85 %
   (`userdata/addon_data/script.sc.widgets/watched.json`),
 - jest obejrzany w bibliotece wideo Kodi,
 - Kodi zapisało go jako obejrzany pod adresem z dodatku (baza `MyVideos*.db`;
@@ -57,8 +57,7 @@ dlatego skórka ma własną. Film jest uznany za obejrzany, gdy:
 Widżet od razu pokazuje listę zapamiętaną poprzednio, a nową pobiera w tle
 (gdy zapamiętana ma ponad 2 minuty, po obejrzeniu filmu, po powrocie z listy
 dodatku na ekran główny, po „Odśwież widżety”). Widżety przeładowują się tylko
-wtedy, gdy coś się zmieniło. W menu kontekstowym filmu w widżecie są pozycje
-**Oznacz jako obejrzane / nieobejrzane (FanFilm)**.
+wtedy, gdy coś się zmieniło.
 
 ### Oceny z Filmweb
 

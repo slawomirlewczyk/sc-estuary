@@ -268,13 +268,6 @@ def to_listitem(entry, is_folder, rating_data=None, is_watched_movie=False):
     if entry.get("uniqueid"):
         tag.setUniqueIDs({k: str(v) for k, v in entry["uniqueid"].items() if v})
 
-    if key.startswith("imdb:") and entry.get("file", "").startswith("plugin://plugin.video.fanfilm/"):
-        imdb = key[5:]
-        li.addContextMenuItems([(
-            store.lang(32031 if is_watched_movie else 32030),
-            f"RunScript(script.sc.widgets,fanfilm_playcount,{imdb},{6 if is_watched_movie else 7})",
-        )])
-
     if not is_folder:
         # The source add-on was called from outside its own window, so (like FanFilm)
         # it built playable items; Kodi will ask it to resolve the stream on click.

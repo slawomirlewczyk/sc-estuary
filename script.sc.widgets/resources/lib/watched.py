@@ -4,7 +4,7 @@ FanFilm (2023, "ptw") reports playcount in its lists only in Trakt mode. In the
 default "local" mode every list says unwatched and the marks live in
 script.module.metahandler's database instead, so widgets also read:
 - metahandler's video_cache.db (movie_meta.overlay = 7 means watched),
-- our own marks (widget context menu, movies played to 85 %+),
+- our own marks (movies played to 85 %+; older versions also the widget menu),
 - Kodi's video library (movies with playcount > 0),
 - Kodi's video database for plugin files (Kodi marks a played plugin item by its
   URL; FanFilm 2026 leaves playcount unset and its window shows Kodi's mark,

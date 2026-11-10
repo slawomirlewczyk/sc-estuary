@@ -97,14 +97,6 @@ msgctxt "#32029"
 msgid "Widgets refreshed"
 msgstr ""
 
-msgctxt "#32030"
-msgid "Mark as watched (FanFilm)"
-msgstr ""
-
-msgctxt "#32031"
-msgid "Mark as unwatched (FanFilm)"
-msgstr ""
-
 msgctxt "#32032"
 msgid "Refreshing widgets in the background…"
 msgstr ""
@@ -113,10 +105,3 @@ msgctxt "#32033"
 msgid "Diagnostics (watched movies)"
 msgstr ""
 
-msgctxt "#32034"
-msgid "Saved as watched: {}"
-msgstr ""
-
-msgctxt "#32035"
-msgid "Could not save: {}"
-msgstr ""
