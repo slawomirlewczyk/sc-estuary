@@ -1,3 +1,8 @@
+[B]SC Estuary 1.5.2[/B]
+- "Hide watched movies" also uses Kodi's own watched marks of add-on movies
+  (what the FanFilm window shows), which add-on lists for widgets leave out
+- widget tiles show the watched checkmark for add-on movies
+
 [B]SC Estuary 1.5.1[/B]
 - "Hide watched movies" now also works with FanFilm's local watched status
   (no Trakt): widgets read FanFilm's local marks, remember movies played to

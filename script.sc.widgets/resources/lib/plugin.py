@@ -106,7 +106,7 @@ def run(argv):
 
     by_addon = sum(1 for e in entries if int(e.get("playcount") or 0) > 0)
     watched_total = sum(1 for e in entries if not is_folder_entry(e) and is_watched(e, watched_ids))
-    store.log(f'widget {n} "{widget["label"]}": {len(entries)} items, {watched_total} watched '
+    store.event(f'widget {n} "{widget["label"]}": {len(entries)} items, {watched_total} watched '
               f'({by_addon} marked by the add-on), hidden: {skipped["watched"]} watched, {skipped["duplicate"]} duplicate '
               f'(hide watched={hide_watched}, hide duplicates={bool(hidden) or None}, '
               f'sort by rating={sort_by_rating}, folders shown={len(folders)})')
@@ -176,7 +176,9 @@ def is_watched(entry, watched_ids):
     if int(entry.get("playcount") or 0) > 0:
         return True
     key = movie_key(entry) or ""
-    return key.startswith("imdb:") and key[5:] in watched_ids
+    if key.startswith("imdb:") and key[5:] in watched_ids:
+        return True
+    return bool(entry.get("file")) and watched.URL_PREFIX + watched.normalize_url(entry["file"]) in watched_ids
 
 
 def get_directory(path):

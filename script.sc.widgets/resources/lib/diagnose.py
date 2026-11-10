@@ -32,15 +32,17 @@ def run():
     own = watched.load_own()
     meta = watched.metahandler_ids()
     lib = watched.library_ids()
+    kodi_files = {watched.normalize_url(u) for u in watched.kodi_db_plugin_files()}
     add(f"metahandler db exists={os.path.exists(watched.METAHANDLER_DB)}, watched there={len(meta)}")
     add(f"own marks={len(own)}, Kodi library watched={len(lib)}")
+    add(f"Kodi video db {watched.kodi_db_file()}: watched plugin files={len(kodi_files)}")
     add(f"own marks file: {watched.OWN_FILE} exists={os.path.exists(watched.OWN_FILE)}, "
         f"data dir writable={os.access(store.DATA_DIR, os.W_OK)}")
-    ids = own.keys() | meta | lib
+    ids = watched.all_ids()
     events = store.recent_events()
     add("")
     add(f"== last events ({len(events)})")
-    lines.extend("  " + e for e in events[-15:])
+    lines.extend("  " + e for e in events[-25:])
 
     for n, widget in enumerate(store.load(), 1):
         add("")
@@ -59,6 +61,8 @@ def run():
             key = plugin.movie_key(e) or "-"
             imdb = key[5:] if key.startswith("imdb:") else ""
             where = [name for name, s in (("own", own), ("meta", meta), ("lib", lib)) if imdb in s]
+            if watched.normalize_url(e.get("file", "")) in kodi_files:
+                where.append("kodidb")
             add(f"  {(e.get('title') or e.get('label') or '')[:30]:30} {key:16} "
                 f"playcount={e.get('playcount')} lastplayed={e.get('lastplayed') or '-'} "
                 f"resume={(e.get('resume') or {}).get('position', '-')} in={','.join(where) or '-'}")

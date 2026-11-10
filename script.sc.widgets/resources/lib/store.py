@@ -32,7 +32,7 @@ def log(msg, level=xbmc.LOGINFO):
 
 
 EVENTS_FILE = os.path.join(DATA_DIR, "events.log")
-EVENTS_KEEP = 40
+EVENTS_KEEP = 80
 
 
 def event(msg):

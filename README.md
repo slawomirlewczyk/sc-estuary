@@ -47,7 +47,10 @@ dlatego skórka ma własną. Film jest uznany za obejrzany, gdy:
   `meta_cache/video_cache.db`),
 - został odtworzony w ≥ 85 % albo oznaczony z menu kontekstowego widżetu
   (`userdata/addon_data/script.sc.widgets/watched.json`),
-- jest obejrzany w bibliotece wideo Kodi.
+- jest obejrzany w bibliotece wideo Kodi,
+- Kodi zapisało go jako obejrzany pod adresem z dodatku (baza `MyVideos*.db`;
+  to te oznaczenia widać w oknie FanFilm, a listy pobierane dla widżetów ich
+  nie zawierają).
 
 ### Szybkie ładowanie
 

@@ -118,5 +118,5 @@ msgid "Saved as watched: {}"
 msgstr "Zapisano jako obejrzany: {}"
 
 msgctxt "#32035"
-msgid "Saved as unwatched: {}"
-msgstr "Zapisano jako nieobejrzany: {}"
+msgid "Could not save: {}"
+msgstr "Nie udało się zapisać: {}"

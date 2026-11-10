@@ -5,12 +5,17 @@ default "local" mode every list says unwatched and the marks live in
 script.module.metahandler's database instead, so widgets also read:
 - metahandler's video_cache.db (movie_meta.overlay = 7 means watched),
 - our own marks (widget context menu, movies played to 85 %+),
-- Kodi's video library (movies with playcount > 0).
+- Kodi's video library (movies with playcount > 0),
+- Kodi's video database for plugin files (Kodi marks a played plugin item by its
+  URL; FanFilm 2026 leaves playcount unset and its window shows Kodi's mark,
+  but JSON-RPC lists - what widgets read - do not include it).
 """
 import json
 import os
+import re
 import sqlite3
 import time
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 import xbmc
 import xbmcvfs
@@ -21,6 +26,45 @@ OWN_FILE = os.path.join(store.DATA_DIR, "watched.json")
 METAHANDLER_DB = xbmcvfs.translatePath(
     "special://profile/addon_data/script.module.metahandler/meta_cache/video_cache.db")
 WATCHED_SHARE = 0.85  # same threshold FanFilm uses during playback
+KODI_DB_DIR = xbmcvfs.translatePath("special://database/")
+URL_PREFIX = "url:"  # all_ids() also holds "url:<normalized plugin URL>" entries
+VOLATILE_PARAMS = {"t"}  # FanFilm 2023 adds a per-listing t=<time>
+IMDB_IN_URL = re.compile(r"[?&/]imdb[=/](tt\d+)")
+
+
+def normalize_url(url):
+    """Plugin URL without parameters that change on every listing."""
+    parts = urlsplit(url)
+    query = [(k, v) for k, v in parse_qsl(parts.query, keep_blank_values=True) if k not in VOLATILE_PARAMS]
+    return urlunsplit(parts._replace(query=urlencode(query)))
+
+
+def kodi_db_file():
+    try:
+        names = [n for n in os.listdir(KODI_DB_DIR) if re.fullmatch(r"MyVideos\d+\.db", n)]
+    except OSError:
+        return None
+    if not names:
+        return None
+    return os.path.join(KODI_DB_DIR, max(names, key=lambda n: int(re.sub(r"\D", "", n))))
+
+
+def kodi_db_plugin_files():
+    """Plugin URLs Kodi itself has marked watched (files.playCount > 0)."""
+    path = kodi_db_file()
+    if not path:
+        return set()
+    try:
+        con = sqlite3.connect(f"file:{path}?mode=ro", uri=True, timeout=2)
+        try:
+            rows = con.execute("SELECT strFilename FROM files WHERE playCount > 0 "
+                               "AND strFilename LIKE 'plugin://%'").fetchall()
+        finally:
+            con.close()
+    except sqlite3.Error as e:
+        store.log(f"cannot read Kodi video database: {e}", xbmc.LOGWARNING)
+        return set()
+    return {str(r[0]) for r in rows}
 
 
 def load_own():
@@ -91,8 +135,15 @@ def library_ids():
 
 
 def all_ids():
-    """IMDb ids of every movie known as watched (without the add-on's own playcount)."""
-    return set(load_own()) | metahandler_ids() | library_ids()
+    """Every movie known as watched (without the add-on's own playcount):
+    IMDb ids, plus "url:<normalized URL>" for plugin files Kodi marked."""
+    ids = set(load_own()) | metahandler_ids() | library_ids()
+    for url in kodi_db_plugin_files():
+        ids.add(URL_PREFIX + normalize_url(url))
+        m = IMDB_IN_URL.search(url)
+        if m:
+            ids.add(m.group(1))
+    return ids
 
 
 class PlaybackTracker:
