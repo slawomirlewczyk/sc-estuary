@@ -165,8 +165,12 @@ def refresh():
 def fanfilm_playcount(imdb, query):
     """Widget context menu: mark in FanFilm (7 = watched, 6 = unwatched), then refresh."""
     if not imdb.startswith("tt") or query not in ("6", "7"):
+        store.event(f"fanfilm_playcount: bad arguments {imdb!r} {query!r}")
         return
     watched.mark(imdb, query == "7")  # FanFilm in local mode does not report it in lists
+    saved = imdb in watched.load_own()
+    store.event(f"fanfilm_playcount {imdb} query={query}: saved as watched={saved}")
+    xbmcgui.Dialog().notification(L(32000), L(32034 if saved else 32035).format(imdb))
     xbmc.executebuiltin(
         f"RunPlugin(plugin://plugin.video.fanfilm/?action=moviePlaycount&imdb={imdb}&query={query})")
     xbmc.Monitor().waitForAbort(2)  # FanFilm saves the mark asynchronously

@@ -31,6 +31,35 @@ def log(msg, level=xbmc.LOGINFO):
     xbmc.log(f"[{ADDON_ID}] {msg}", level)
 
 
+EVENTS_FILE = os.path.join(DATA_DIR, "events.log")
+EVENTS_KEEP = 40
+
+
+def event(msg):
+    """Log and append to events.log (last EVENTS_KEEP lines), shown in Diagnostics."""
+    log(msg)
+    try:
+        os.makedirs(DATA_DIR, exist_ok=True)
+        try:
+            with open(EVENTS_FILE, encoding="utf-8") as f:
+                lines = f.read().splitlines()
+        except OSError:
+            lines = []
+        lines.append(f"{time.strftime('%m-%d %H:%M:%S')} {msg}")
+        with open(EVENTS_FILE, "w", encoding="utf-8") as f:
+            f.write("\n".join(lines[-EVENTS_KEEP:]) + "\n")
+    except OSError as e:
+        log(f"cannot write {EVENTS_FILE}: {e}", xbmc.LOGWARNING)
+
+
+def recent_events():
+    try:
+        with open(EVENTS_FILE, encoding="utf-8") as f:
+            return f.read().splitlines()
+    except OSError:
+        return []
+
+
 def lang(string_id):
     return ADDON.getLocalizedString(string_id)
 

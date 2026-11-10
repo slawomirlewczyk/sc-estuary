@@ -112,3 +112,11 @@ msgstr ""
 msgctxt "#32033"
 msgid "Diagnostics (watched movies)"
 msgstr ""
+
+msgctxt "#32034"
+msgid "Saved as watched: {}"
+msgstr ""
+
+msgctxt "#32035"
+msgid "Saved as unwatched: {}"
+msgstr ""

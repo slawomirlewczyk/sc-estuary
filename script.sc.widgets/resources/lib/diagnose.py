@@ -34,7 +34,13 @@ def run():
     lib = watched.library_ids()
     add(f"metahandler db exists={os.path.exists(watched.METAHANDLER_DB)}, watched there={len(meta)}")
     add(f"own marks={len(own)}, Kodi library watched={len(lib)}")
+    add(f"own marks file: {watched.OWN_FILE} exists={os.path.exists(watched.OWN_FILE)}, "
+        f"data dir writable={os.access(store.DATA_DIR, os.W_OK)}")
     ids = own.keys() | meta | lib
+    events = store.recent_events()
+    add("")
+    add(f"== last events ({len(events)})")
+    lines.extend("  " + e for e in events[-15:])
 
     for n, widget in enumerate(store.load(), 1):
         add("")
