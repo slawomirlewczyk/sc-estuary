@@ -8,15 +8,19 @@ Refresh triggers:
 - "Refresh widgets" and "Mark as watched" actions,
 - playback stopped / video library changed,
 - coming back to the home screen from an add-on list (movies may be marked there).
+
+A movie played to 85 % is remembered as watched (watched.PlaybackTracker); a
+refresh also reloads the widgets when the set of watched movies changed.
 """
 import time
 
 import xbmc
 import xbmcgui
 
-from resources.lib import plugin, ratings, store
+from resources.lib import plugin, ratings, store, watched
 
 AUTO_MIN_GAP = 30  # seconds between automatic full refreshes
+WATCHED_PROP = "sc_widgets_watched"  # watched ids the widgets were last drawn with
 
 
 class Monitor(xbmc.Monitor):
@@ -34,7 +38,7 @@ def refresh(numbers):
     widgets = store.load()
     targets = range(1, len(widgets) + 1) if "all" in numbers else sorted(
         int(n) for n in numbers if n.isdigit() and 1 <= int(n) <= len(widgets))
-    changed = False
+    changed = watched_changed()
     for n in targets:
         widget = widgets[n - 1]
         fresh = plugin.widget_entries(widget)
@@ -48,6 +52,15 @@ def refresh(numbers):
         store.sync_skin(widgets)  # widgets reload, drawn from the fresh lists
     store.log(f"background refresh {sorted(numbers)}: {'changed' if changed else 'no changes'}")
     return changed
+
+
+def watched_changed():
+    """True when movies were marked (un)watched since the last check."""
+    win = xbmcgui.Window(10000)
+    now = ",".join(sorted(watched.all_ids()))
+    before = win.getProperty(WATCHED_PROP)
+    win.setProperty(WATCHED_PROP, now)
+    return before != now and bool(before or now)
 
 
 def update_ratings(monitor):
@@ -72,6 +85,8 @@ def update_ratings(monitor):
 def main():
     monitor = Monitor()
     player = xbmc.Player()
+    tracker = watched.PlaybackTracker(player)
+    watched_changed()  # remember what the widgets start with
     was_in_addon_list = False
     last_auto = 0.0
     while not monitor.abortRequested():
@@ -86,7 +101,9 @@ def main():
         was_in_addon_list = in_addon_list or (was_in_addon_list and not on_home)
 
         if player.isPlaying():
+            tracker.tick()  # widgets reload after Player.OnStop if a movie got marked
             continue
+        tracker.tick()
 
         requests = store.take_refresh_requests()
         if monitor.pending and time.time() - last_auto > AUTO_MIN_GAP:

@@ -39,8 +39,15 @@ a gdy ich brak, po tytule i roku.
 
 Ustawienia skórki → Menu główne → Filmy → **Ukrywaj obejrzane filmy**.
 Opcja Kodi „Ukryj obejrzane” działa tylko w oknie listy, nie w widżetach,
-dlatego skórka ma własną. Korzysta z oznaczeń dodatku (FanFilm: lokalnie
-albo z Trakt).
+dlatego skórka ma własną. Film jest uznany za obejrzany, gdy:
+
+- FanFilm oznacza go w liście (tylko w trybie Trakt – w trybie „lokalnie”
+  FanFilm zawsze podaje „nieobejrzany”),
+- FanFilm zapisał go lokalnie jako obejrzany (baza `script.module.metahandler`,
+  `meta_cache/video_cache.db`),
+- został odtworzony w ≥ 85 % albo oznaczony z menu kontekstowego widżetu
+  (`userdata/addon_data/script.sc.widgets/watched.json`),
+- jest obejrzany w bibliotece wideo Kodi.
 
 ### Szybkie ładowanie
 

@@ -6,8 +6,9 @@ Folders ("next page") are dropped from every page except the last one and
 always come after the movies. With "Sort by rating" movies are ordered from the
 highest rating (Filmweb, else IMDb, else the add-on's own).
 With the skin setting "Hide duplicate movies" a movie already shown by a higher
-widget is left out of lower ones; with "Hide watched movies" anything the
-source add-on marks as watched (playcount > 0) is left out.
+widget is left out of lower ones; with "Hide watched movies" anything known as
+watched is left out: playcount > 0 from the add-on (FanFilm in Trakt mode) or
+an IMDb id from watched.all_ids() (FanFilm's local marks, our own, library).
 
 Speed: a widget is drawn at once from the list saved last time; if that list is
 older than STALE_AFTER the service fetches a fresh one in the background and
@@ -21,7 +22,7 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 
-from . import ratings, store
+from . import ratings, store, watched
 
 PROPERTIES = [
     "title", "originaltitle", "year", "plot", "plotoutline", "tagline", "rating", "votes",
@@ -66,6 +67,7 @@ def run(argv):
             hidden.update(seen_keys(k, widgets[k - 1]))
 
     hide_watched = xbmc.getCondVisibility("Skin.HasSetting(sc_hide_watched)")
+    watched_ids = watched.all_ids()
     rating_data = None
     if xbmc.getCondVisibility("Skin.HasSetting(sc_filmweb_ratings)"):
         rating_data = ratings.load()
@@ -80,7 +82,7 @@ def run(argv):
         if is_folder_entry(entry):
             folders.append(entry)  # e.g. "next page": never between movies, see below
             continue
-        if hide_watched and int(entry.get("playcount") or 0) > 0:
+        if hide_watched and is_watched(entry, watched_ids):
             skipped["watched"] += 1
             continue
         key = movie_key(entry)
@@ -99,11 +101,13 @@ def run(argv):
         folders = folders[-1:]
     for entry in movies + folders:
         is_folder = is_folder_entry(entry)
-        xbmcplugin.addDirectoryItem(handle, entry["file"], to_listitem(entry, is_folder, rating_data), is_folder)
+        li = to_listitem(entry, is_folder, rating_data, not is_folder and is_watched(entry, watched_ids))
+        xbmcplugin.addDirectoryItem(handle, entry["file"], li, is_folder)
 
-    watched_total = sum(1 for e in entries if int(e.get("playcount") or 0) > 0)
-    store.log(f'widget {n} "{widget["label"]}": {len(entries)} items, {watched_total} marked watched '
-              f'by the add-on, hidden: {skipped["watched"]} watched, {skipped["duplicate"]} duplicate '
+    by_addon = sum(1 for e in entries if int(e.get("playcount") or 0) > 0)
+    watched_total = sum(1 for e in entries if not is_folder_entry(e) and is_watched(e, watched_ids))
+    store.log(f'widget {n} "{widget["label"]}": {len(entries)} items, {watched_total} watched '
+              f'({by_addon} marked by the add-on), hidden: {skipped["watched"]} watched, {skipped["duplicate"]} duplicate '
               f'(hide watched={hide_watched}, hide duplicates={bool(hidden) or None}, '
               f'sort by rating={sort_by_rating}, folders shown={len(folders)})')
     xbmcplugin.endOfDirectory(handle, cacheToDisc=False)
@@ -167,6 +171,14 @@ def movie_key(entry):
     return f"title:{title}|{entry.get('year') or ''}" if title else f"url:{entry['file']}"
 
 
+def is_watched(entry, watched_ids):
+    """Watched per the add-on (playcount) or per watched.all_ids() (by IMDb id)."""
+    if int(entry.get("playcount") or 0) > 0:
+        return True
+    key = movie_key(entry) or ""
+    return key.startswith("imdb:") and key[5:] in watched_ids
+
+
 def get_directory(path):
     for props in (PROPERTIES, MINIMAL_PROPERTIES):
         request = {
@@ -201,7 +213,7 @@ def sort_rating(entry, rating_data=None):
         return 0.0
 
 
-def to_listitem(entry, is_folder, rating_data=None):
+def to_listitem(entry, is_folder, rating_data=None, is_watched_movie=False):
     label = entry.get("label") or entry.get("title") or ""
     li = xbmcgui.ListItem(label, offscreen=True)
 
@@ -249,17 +261,16 @@ def to_listitem(entry, is_folder, rating_data=None):
         tag.setRating(own[0], own[1])
     if entry.get("runtime"):
         tag.setDuration(int(entry["runtime"]))
-    if entry.get("playcount"):
-        tag.setPlaycount(int(entry["playcount"]))
+    if is_watched_movie:
+        tag.setPlaycount(max(1, int(entry.get("playcount") or 0)))
     if entry.get("uniqueid"):
         tag.setUniqueIDs({k: str(v) for k, v in entry["uniqueid"].items() if v})
 
     if key.startswith("imdb:") and entry.get("file", "").startswith("plugin://plugin.video.fanfilm/"):
         imdb = key[5:]
-        watched = int(entry.get("playcount") or 0) > 0
         li.addContextMenuItems([(
-            store.lang(32031 if watched else 32030),
-            f"RunScript(script.sc.widgets,fanfilm_playcount,{imdb},{6 if watched else 7})",
+            store.lang(32031 if is_watched_movie else 32030),
+            f"RunScript(script.sc.widgets,fanfilm_playcount,{imdb},{6 if is_watched_movie else 7})",
         )])
 
     if not is_folder:

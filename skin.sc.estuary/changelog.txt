@@ -1,3 +1,8 @@
+[B]SC Estuary 1.5.1[/B]
+- "Hide watched movies" now also works with FanFilm's local watched status
+  (no Trakt): widgets read FanFilm's local marks, remember movies played to
+  85 % and movies marked from the widget menu, and Kodi library plays
+
 [B]SC Estuary 1.5.0[/B]
 - "Sort widgets by rating (highest first)" (Skin settings > Home > Movies):
   Filmweb rating, else IMDb, else the add-on's own

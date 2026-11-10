@@ -2,7 +2,7 @@
 import xbmc
 import xbmcgui
 
-from . import store
+from . import store, watched
 
 L = store.lang
 
@@ -159,6 +159,7 @@ def fanfilm_playcount(imdb, query):
     """Widget context menu: mark in FanFilm (7 = watched, 6 = unwatched), then refresh."""
     if not imdb.startswith("tt") or query not in ("6", "7"):
         return
+    watched.mark(imdb, query == "7")  # FanFilm in local mode does not report it in lists
     xbmc.executebuiltin(
         f"RunPlugin(plugin://plugin.video.fanfilm/?action=moviePlaycount&imdb={imdb}&query={query})")
     xbmc.Monitor().waitForAbort(2)  # FanFilm saves the mark asynchronously
