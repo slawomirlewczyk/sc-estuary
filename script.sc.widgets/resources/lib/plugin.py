@@ -23,7 +23,7 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 
-from . import ratings, store, watched
+from . import providers, ratings, store, watched
 
 PROPERTIES = [
     "title", "originaltitle", "year", "plot", "plotoutline", "tagline", "rating", "votes",
@@ -76,6 +76,11 @@ def run(argv):
         imdbs = [k[5:] for k in map(movie_key, entries) if k and k.startswith("imdb:")]
         if ratings.missing(rating_data, imdbs):
             store.request_refresh(["ratings"])  # looked up in the background
+    vod_data = None
+    if xbmc.getCondVisibility("Skin.HasSetting(sc_vod_icons)") and store.tmdb_key():
+        vod_data = providers.load()
+        if providers.missing(vod_data, [k for k in map(movie_key, entries) if k and k[:5] in ("imdb:", "tmdb:")]):
+            store.request_refresh(["providers"])  # looked up in the background
 
     shown = set()
     skipped = {"watched": 0, "duplicate": 0}
@@ -103,6 +108,8 @@ def run(argv):
     for entry in movies + folders:
         is_folder = is_folder_entry(entry)
         li = to_listitem(entry, is_folder, rating_data, not is_folder and is_watched(entry, watched_ids))
+        if vod_data is not None and not is_folder:
+            set_vod(li, providers.for_movie(vod_data, movie_key(entry) or ""))
         xbmcplugin.addDirectoryItem(handle, entry["file"], li, is_folder)
 
     by_addon = sum(1 for e in entries if int(e.get("playcount") or 0) > 0)
@@ -288,6 +295,24 @@ def sort_rating(entry, rating_data=None):
         return float(entry.get("rating") or 0)
     except (TypeError, ValueError):
         return 0.0
+
+
+def tmdb_id(entry):
+    """TMDb id the add-on gave for the movie, else None."""
+    tmdb = str((entry.get("uniqueid") or {}).get("tmdb") or "")
+    if not tmdb:
+        m = TMDB_RE.search(entry.get("file", ""))
+        tmdb = m.group(1) if m else ""
+    return tmdb if tmdb and tmdb != "0" else None
+
+
+def set_vod(li, services):
+    """Tile properties: sc_vod1..3 (logo URL), sc_vod1_name..., sc_vod (names)."""
+    for i, (name, logo) in enumerate(services, 1):
+        li.setProperty(f"sc_vod{i}", logo)
+        li.setProperty(f"sc_vod{i}_name", name)
+    if services:
+        li.setProperty("sc_vod", ", ".join(name for name, _ in services))
 
 
 def to_listitem(entry, is_folder, rating_data=None, is_watched_movie=False):

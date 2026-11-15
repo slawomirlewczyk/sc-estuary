@@ -1041,3 +1041,11 @@ msgstr ""
 msgctxt "#31958"
 msgid "Sort widgets by rating (highest first)"
 msgstr ""
+
+msgctxt "#31959"
+msgid "VOD service icons (Poland, TMDb / JustWatch)"
+msgstr ""
+
+msgctxt "#31960"
+msgid "TMDb API key"
+msgstr ""

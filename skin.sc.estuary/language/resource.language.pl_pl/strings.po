@@ -849,6 +849,14 @@ msgctxt "#31958"
 msgid "Sort widgets by rating (highest first)"
 msgstr "Sortuj widżety od najwyższej oceny"
 
+msgctxt "#31959"
+msgid "VOD service icons (Poland, TMDb / JustWatch)"
+msgstr "Ikony serwisów VOD (Polska, TMDb / JustWatch)"
+
+msgctxt "#31960"
+msgid "TMDb API key"
+msgstr "Klucz API TMDb"
+
 #~ msgctxt "#31025"
 #~ msgid "No favourites found. You can add any item from media views to this list by using the context menu."
 #~ msgstr "Brak ulubionych. Możesz dodać dowolną pozycję do tej listy, z poziomu widoków mediów, przy użyciu menu kontekstowego."

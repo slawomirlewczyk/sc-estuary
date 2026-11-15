@@ -17,7 +17,7 @@ import time
 import xbmc
 import xbmcgui
 
-from resources.lib import plugin, ratings, store, watched
+from resources.lib import plugin, providers, ratings, store, watched
 
 AUTO_MIN_GAP = 30  # seconds between automatic full refreshes
 STARTUP_GRACE = 120  # seconds after start without background work (Kodi and add-ons start up)
@@ -94,6 +94,25 @@ def update_ratings(monitor, player=None):
         store.log(f"ratings updated for {len(movies)} movies")
 
 
+def update_providers(monitor, player=None):
+    """VOD services in Poland (TMDb / JustWatch) for every movie in the saved widget lists."""
+    api_key = store.tmdb_key()
+    if not (xbmc.getCondVisibility("Skin.HasSetting(sc_vod_icons)") and api_key):
+        return
+    widgets = store.load()
+    movies = {}
+    for n, widget in enumerate(widgets, 1):
+        cached = store.load_entries(n, widget["paths"])
+        for entry in (cached[0] if cached else []):
+            key = plugin.movie_key(entry) or ""
+            if key[:5] in ("imdb:", "tmdb:"):
+                movies.setdefault(key, plugin.tmdb_id(entry))
+    if movies and providers.update(movies, api_key,
+                                   abort=lambda: monitor.abortRequested() or bool(player and player.isPlaying())):
+        store.sync_skin(widgets)  # redraw tiles with the new icons
+        store.log(f"VOD services updated for {len(movies)} movies")
+
+
 def main():
     monitor = Monitor()
     player = xbmc.Player()
@@ -134,11 +153,14 @@ def main():
 
         notify = "notify" in requests
         want_ratings = "ratings" in requests
-        requests -= {"notify", "ratings"}
+        want_providers = "providers" in requests
+        requests -= {"notify", "ratings", "providers"}
         if requests:
             refresh(requests, monitor, player)
         if requests or want_ratings:
             update_ratings(monitor, player)
+        if requests or want_providers:
+            update_providers(monitor, player)
         if notify:
             xbmcgui.Dialog().notification(store.lang(32000), store.lang(32029))
 

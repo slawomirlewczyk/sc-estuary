@@ -106,6 +106,11 @@ def sync_skin(widgets, only=None):
             xbmc.executebuiltin(f"Skin.Reset(sc_mw{n}_label)")
 
 
+def tmdb_key():
+    """The user's TMDb API key (v3 key or v4 token) from the skin settings."""
+    return xbmc.getInfoLabel("Skin.String(sc_tmdb_key)").strip()
+
+
 def max_widgets():
     raw = xbmc.getInfoLabel("Skin.String(sc_max_widgets)")
     try:

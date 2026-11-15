@@ -352,6 +352,36 @@
 				<top>-8</top>
 				<include condition="Skin.HasSetting(circle_rating) | Skin.HasSetting(circle_userrating)">RatingCircle</include>
 			</control>
+			<!-- SC Estuary: VOD services in Poland, set by script.sc.widgets (sc_vod_icons) -->
+			<control type="group">
+				<left>43</left>
+				<top>18</top>
+				<visible>!String.IsEmpty(ListItem.Property(sc_vod1))</visible>
+				<control type="image">
+					<top>0</top>
+					<width>44</width>
+					<height>44</height>
+					<texture background="true">$INFO[ListItem.Property(sc_vod1)]</texture>
+					<aspectratio>keep</aspectratio>
+					<visible>!String.IsEmpty(ListItem.Property(sc_vod1))</visible>
+				</control>
+				<control type="image">
+					<top>50</top>
+					<width>44</width>
+					<height>44</height>
+					<texture background="true">$INFO[ListItem.Property(sc_vod2)]</texture>
+					<aspectratio>keep</aspectratio>
+					<visible>!String.IsEmpty(ListItem.Property(sc_vod2))</visible>
+				</control>
+				<control type="image">
+					<top>100</top>
+					<width>44</width>
+					<height>44</height>
+					<texture background="true">$INFO[ListItem.Property(sc_vod3)]</texture>
+					<aspectratio>keep</aspectratio>
+					<visible>!String.IsEmpty(ListItem.Property(sc_vod3))</visible>
+				</control>
+			</control>
 			<control type="progress">
 				<left>35</left>
 				<top>365</top>

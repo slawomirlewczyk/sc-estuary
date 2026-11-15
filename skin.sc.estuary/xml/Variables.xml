@@ -982,4 +982,8 @@
 		<value condition="!String.IsEmpty(Skin.String(sc_max_widgets))">$INFO[Skin.String(sc_max_widgets)]</value>
 		<value>20</value>
 	</variable>
+	<variable name="SCTmdbKeyVar">
+		<value condition="!String.IsEmpty(Skin.String(sc_tmdb_key))">********</value>
+		<value>$LOCALIZE[231]</value>
+	</variable>
 </includes>

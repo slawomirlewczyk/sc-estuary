@@ -76,6 +76,21 @@ ocenę IMDb, a gdy i jej brak – ocenę z dodatku (TMDb).
   locie raz w tygodniu; zapisywane są tylko filmy z widżetów.
 - Dane: `userdata/addon_data/script.sc.widgets/ratings.json`.
 
+### Ikony serwisów VOD
+
+Ustawienia skórki → Menu główne → Filmy → **Ikony serwisów VOD (Polska,
+TMDb / JustWatch)** i poniżej **Klucz API TMDb** (darmowy: themoviedb.org →
+Ustawienia → API; działa klucz v3 albo token v4). W lewym górnym rogu kafelka
+pojawiają się logotypy (maks. 3) serwisów, w których film jest dostępny w
+Polsce w abonamencie lub za darmo (np. Netflix, Prime Video, Max, Disney+,
+SkyShowtime). Wypożyczenie i zakup są pomijane.
+
+- Źródło: TMDb `/movie/<id>/watch/providers`, kraj `PL` (dane JustWatch);
+  identyfikator TMDb z dodatku, a gdy go brak – `/find/<imdb>`.
+- Pobierane tylko w tle, do 150 filmów na przebieg, wynik sprawdzany ponownie
+  co 3 dni.
+- Dane: `userdata/addon_data/script.sc.widgets/providers.json`.
+
 ### Sortowanie po ocenie
 
 Ustawienia skórki → Menu główne → Filmy → **Sortuj widżety od najwyższej

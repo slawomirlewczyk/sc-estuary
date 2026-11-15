@@ -219,6 +219,21 @@
 					<onclick>Skin.ToggleSetting(sc_sort_rating)</onclick>
 					<onclick>RunScript(script.sc.widgets,reload)</onclick>
 				</control>
+				<control type="radiobutton" id="6119">
+					<label>- $LOCALIZE[31959]</label>
+					<include>DefaultSettingButton</include>
+					<selected>Skin.HasSetting(sc_vod_icons)</selected>
+					<onclick>Skin.ToggleSetting(sc_vod_icons)</onclick>
+					<onclick>RunScript(script.sc.widgets,reload)</onclick>
+				</control>
+				<control type="button" id="6120">
+					<label>  - $LOCALIZE[31960]</label>
+					<label2>$VAR[SCTmdbKeyVar]</label2>
+					<include>DefaultSettingButton</include>
+					<onclick>Skin.SetString(sc_tmdb_key)</onclick>
+					<onclick>RunScript(script.sc.widgets,reload)</onclick>
+					<enable>Skin.HasSetting(sc_vod_icons)</enable>
+				</control>
 				<control type="button" id="627">
 					<label>- $LOCALIZE[31176]</label>
 					<include>DefaultSettingButton</include>
