@@ -556,6 +556,9 @@
 					<onup condition="System.HasAddon(script.embuary.info) + !System.AddonIsEnabled(script.embuary.info) + !String.IsEqual(ListItem.DBType,set)">EnableAddon(script.embuary.info)</onup>
 					<onup condition="!System.HasAddon(script.embuary.info) + !String.IsEqual(ListItem.DBType,set)">InstallAddon(script.embuary.info)</onup>
 					<visible>Integer.IsEqual(Container(50).NumItems,0) + !String.IsEmpty(ListItem.Property(sc_key))</visible>
+					<!-- Kodi keeps the previous movie's actors until the new list arrives: hide them meanwhile
+					     (a fade, not visibility, so the list keeps loading) -->
+					<animation effect="fade" start="100" end="0" time="0" condition="Container(51).IsUpdating">Conditional</animation>
 					<onleft>51</onleft>
 					<onright>51</onright>
 					<ondown>140</ondown>
@@ -767,6 +770,24 @@
 						</control>
 					</focusedlayout>
 					<content>plugin://script.sc.widgets/?cast=$INFO[ListItem.Property(sc_key)]&amp;tmdb=$INFO[ListItem.Property(sc_tmdb)]</content>
+				</control>
+				<control type="group">
+					<left>567</left>
+					<top>293</top>
+					<visible>Control.IsVisible(51) + Container(51).IsUpdating</visible>
+					<control type="image">
+						<width>100</width>
+						<height>100</height>
+						<aspectratio aligny="center">keep</aspectratio>
+						<texture colordiffuse="black">dialogs/extendedprogress/loading-back.png</texture>
+					</control>
+					<control type="image">
+						<width>100</width>
+						<height>100</height>
+						<aspectratio aligny="center">keep</aspectratio>
+						<texture>dialogs/extendedprogress/loading.png</texture>
+						<animation effect="rotate" center="auto" start="360" end="0" time="1500" loop="true" condition="true">Conditional</animation>
+					</control>
 				</control>
 				<control type="list" id="5000">
 					<left>0</left>

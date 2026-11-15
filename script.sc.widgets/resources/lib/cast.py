@@ -13,7 +13,7 @@ import os
 import xbmcgui
 import xbmcplugin
 
-from . import providers, store
+from . import store
 
 CAST_DIR = os.path.join(store.DATA_DIR, "cast")
 MAX_ACTORS = 25
@@ -69,6 +69,7 @@ def run(handle, key, tmdb):
     actors = load(key) if key else None
     if actors is None and store.tmdb_key() and (tmdb or key[:5] in ("imdb:", "tmdb:")):
         try:
+            from . import providers  # network only for movies the add-on gave no cast for
             actors = providers.credits(key, tmdb, store.tmdb_key())
             save(key, actors)
         except Exception as e:  # offline / bad key: the dialog just shows no cast

@@ -5,7 +5,13 @@ import traceback
 from resources.lib import store
 
 try:
-    if len(sys.argv) >= 2 and sys.argv[1].lstrip("-").isdigit():
+    if len(sys.argv) >= 3 and sys.argv[2].startswith("?cast="):
+        # Info dialog cast row: only the light cast module, not the whole widget code
+        from urllib.parse import parse_qs
+        from resources.lib import cast
+        query = parse_qs(sys.argv[2][1:])
+        cast.run(int(sys.argv[1]), query["cast"][0], (query.get("tmdb") or [""])[0])
+    elif len(sys.argv) >= 2 and sys.argv[1].lstrip("-").isdigit():
         # plugin://script.sc.widgets/?w=1 -> argv = [base_url, handle, '?w=1']
         from resources.lib import plugin
         plugin.run(sys.argv)
