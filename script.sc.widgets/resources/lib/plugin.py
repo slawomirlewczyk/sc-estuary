@@ -27,7 +27,7 @@ from . import ratings, store, watched
 
 PROPERTIES = [
     "title", "originaltitle", "year", "plot", "plotoutline", "tagline", "rating", "votes",
-    "genre", "director", "writer", "studio", "country", "mpaa", "runtime", "premiered",
+    "genre", "director", "writer", "cast", "studio", "country", "mpaa", "runtime", "premiered",
     "trailer", "imdbnumber", "uniqueid", "playcount", "lastplayed", "resume", "art", "thumbnail", "fanart", "file",
 ]
 MINIMAL_PROPERTIES = ["title", "art", "thumbnail", "fanart", "file", "playcount"]
@@ -336,6 +336,10 @@ def to_listitem(entry, is_folder, rating_data=None, is_watched_movie=False):
         tag.setRatings(all_ratings, "filmweb" if "filmweb" in extra else "imdb")
     elif own:
         tag.setRating(own[0], own[1])
+    cast = [c for c in entry.get("cast") or [] if isinstance(c, dict) and c.get("name")]
+    if cast:  # shown by the Info dialog ("Obsada")
+        tag.setCast([xbmc.Actor(c["name"], c.get("role") or "", int(c.get("order") or i),
+                                c.get("thumbnail") or "") for i, c in enumerate(cast)])
     if entry.get("runtime"):
         tag.setDuration(int(entry["runtime"]))
     if is_watched_movie:

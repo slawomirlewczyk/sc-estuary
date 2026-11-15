@@ -141,8 +141,11 @@ def _cache_file(n):
     return os.path.join(CACHE_DIR, f"w{n}.json")
 
 
+CACHE_FORMAT = "2"  # bump when the saved fields change (2: cast)
+
+
 def _paths_sig(paths):
-    return hashlib.sha1("\n".join(paths).encode("utf-8")).hexdigest()
+    return hashlib.sha1("\n".join([CACHE_FORMAT] + list(paths)).encode("utf-8")).hexdigest()
 
 
 def save_entries(n, paths, entries):
