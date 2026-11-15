@@ -234,6 +234,12 @@
 					<onclick>RunScript(script.sc.widgets,reload)</onclick>
 					<enable>Skin.HasSetting(sc_vod_icons)</enable>
 				</control>
+				<control type="button" id="6122">
+					<label>  - $LOCALIZE[31961]</label>
+					<include>DefaultSettingButton</include>
+					<onclick>RunScript(script.sc.widgets,tmdbtest)</onclick>
+					<enable>!String.IsEmpty(Skin.String(sc_tmdb_key))</enable>
+				</control>
 				<control type="button" id="627">
 					<label>- $LOCALIZE[31176]</label>
 					<include>DefaultSettingButton</include>

@@ -90,6 +90,9 @@ SkyShowtime). Wypożyczenie i zakup są pomijane.
 - Pobierane tylko w tle, do 150 filmów na przebieg, wynik sprawdzany ponownie
   co 3 dni.
 - Dane: `userdata/addon_data/script.sc.widgets/providers.json`.
+- **Testuj klucz API TMDb** (pod polem klucza): sprawdza format klucza,
+  połączenie z TMDb (błędy sieci / SSL / HTTP 401), przykładowy film w PL i
+  stan zapisanych danych; gdy klucz działa, od razu zleca pobranie ikon w tle.
 - Po pobraniu przeładowują się tylko widżety, w których coś się zmieniło.
   Ostatni błąd TMDb (np. zły klucz – HTTP 401) jest w powiadomieniu i w
   **Diagnostyce** (wiersz `VOD icons=…`).

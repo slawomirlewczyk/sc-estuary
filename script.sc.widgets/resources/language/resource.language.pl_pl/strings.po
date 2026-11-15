@@ -109,3 +109,23 @@ msgstr "Diagnostyka (obejrzane filmy)"
 msgctxt "#32036"
 msgid "Next page"
 msgstr "Następna strona"
+
+msgctxt "#32037"
+msgid "TMDb API key test"
+msgstr "Test klucza API TMDb"
+
+msgctxt "#32038"
+msgid "Connecting to TMDb..."
+msgstr "Łączenie z TMDb..."
+
+msgctxt "#32039"
+msgid "The key works. VOD icons are being fetched in the background and appear on the tiles in a moment."
+msgstr "Klucz działa. Ikony VOD są pobierane w tle i za chwilę pojawią się na kafelkach."
+
+msgctxt "#32040"
+msgid "Turn on \"VOD service icons\" above to show them on tiles."
+msgstr "Włącz powyżej „Ikony serwisów VOD”, żeby pokazać je na kafelkach."
+
+msgctxt "#32041"
+msgid "The key does not work. Details below."
+msgstr "Klucz nie działa. Szczegóły poniżej."

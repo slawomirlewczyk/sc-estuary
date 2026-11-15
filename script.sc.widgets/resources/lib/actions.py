@@ -1,4 +1,4 @@
-"""Skin actions: RunScript(script.sc.widgets,add|manage|setmax|refresh|reload|diagnose)."""
+"""Skin actions: RunScript(script.sc.widgets,add|manage|setmax|refresh|reload|diagnose|tmdbtest)."""
 import xbmc
 import xbmcgui
 
@@ -19,10 +19,35 @@ def run(action, args=()):
     elif action == "diagnose":
         from . import diagnose
         diagnose.run()
+    elif action == "tmdbtest":
+        tmdb_test()
     elif action == "migrate":
         store.load()  # converts SC Estuary 1.0.0 skin strings on first read
     else:
         manage()
+
+
+def tmdb_test():
+    """Skin settings > TMDb API key test: report, and on success look up the icons now."""
+    from . import providers
+    key = xbmc.getInfoLabel("Skin.String(sc_tmdb_key)")
+    progress = xbmcgui.DialogProgress()
+    progress.create(L(32037), L(32038))
+    try:
+        ok, lines = providers.test_key(key)
+    finally:
+        progress.close()
+    if ok:
+        clean = key.strip().strip('"\'')
+        if clean != key:  # spaces or quotes pasted with the key
+            xbmc.executebuiltin(f"Skin.SetString(sc_tmdb_key,{clean})")
+        if not xbmc.getCondVisibility("Skin.HasSetting(sc_vod_icons)"):
+            lines.append(L(32040))
+        xbmcgui.Window(10000).clearProperty("sc_widgets_vod_error")
+        store.request_refresh(["providers"])  # the service fetches the icons right away
+    head = L(32039) if ok else L(32041)
+    store.event(f"TMDb key test: ok={ok} | " + " | ".join(lines))
+    xbmcgui.Dialog().textviewer(L(32037), head + "\n\n" + "\n".join(lines))
 
 
 def current_folder():

@@ -152,3 +152,39 @@ def watch_providers(tmdb, api_key):
             seen.add(p.get("provider_id"))
             result.append({"name": p.get("provider_name") or "", "logo": p["logo_path"]})
     return result[:MAX_ICONS]
+
+
+TEST_MOVIE = ("550", "Fight Club")  # TMDb id of a movie with Polish streaming offers
+
+
+def test_key(api_key):
+    """(ok, [report lines]) for the key: format, connection, sample PL offers, saved data."""
+    lines = []
+    raw = api_key
+    api_key = api_key.strip().strip('"\'')
+    if not api_key:
+        return False, ["key: empty"]
+    kind = "v4 read access token" if len(api_key) > 40 else "v3 API key"
+    lines.append(f"key: {kind}, {len(api_key)} chars"
+                 + (" (spaces / quotes around it: removed for the test)" if raw != api_key else "")
+                 + (" (expected 32 characters)" if kind.startswith("v3") and len(api_key) != 32 else ""))
+    ok = False
+    try:
+        started = time.time()
+        tmdb_get("/configuration", api_key)
+        lines.append(f"connection: OK ({time.time() - started:.1f} s)")
+        ok = True
+        offers = watch_providers(TEST_MOVIE[0], api_key)
+        lines.append(f"{TEST_MOVIE[1]} in {COUNTRY}: " + (", ".join(p["name"] for p in offers) or "no subscription offers"))
+    except urllib.error.HTTPError as e:
+        lines.append(f"connection: HTTP {e.code} {e.reason}"
+                     + (" - TMDb rejects this key" if e.code == 401 else ""))
+    except Exception as e:  # DNS, SSL certificates, no network
+        lines.append(f"connection: {type(e).__name__}: {e}")
+    data = load()
+    movies = data["movies"].values()
+    lines.append(f"saved: {len(data['movies'])} movies checked, "
+                 f"{sum(1 for m in movies if m.get('providers'))} with services, "
+                 f"{sum(1 for m in movies if not m.get('tmdb'))} without TMDb id")
+    lines.append(f"last background error: {data.get('error') or '-'}")
+    return ok, lines

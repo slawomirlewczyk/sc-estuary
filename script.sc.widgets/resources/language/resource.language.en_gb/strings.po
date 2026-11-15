@@ -109,3 +109,23 @@ msgstr ""
 msgctxt "#32036"
 msgid "Next page"
 msgstr ""
+
+msgctxt "#32037"
+msgid "TMDb API key test"
+msgstr ""
+
+msgctxt "#32038"
+msgid "Connecting to TMDb..."
+msgstr ""
+
+msgctxt "#32039"
+msgid "The key works. VOD icons are being fetched in the background and appear on the tiles in a moment."
+msgstr ""
+
+msgctxt "#32040"
+msgid "Turn on \"VOD service icons\" above to show them on tiles."
+msgstr ""
+
+msgctxt "#32041"
+msgid "The key does not work. Details below."
+msgstr ""

@@ -108,7 +108,7 @@ def sync_skin(widgets, only=None):
 
 def tmdb_key():
     """The user's TMDb API key (v3 key or v4 token) from the skin settings."""
-    return xbmc.getInfoLabel("Skin.String(sc_tmdb_key)").strip()
+    return xbmc.getInfoLabel("Skin.String(sc_tmdb_key)").strip().strip("\"'")
 
 
 def max_widgets():
