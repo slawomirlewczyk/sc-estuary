@@ -90,6 +90,18 @@ SkyShowtime). Wypożyczenie i zakup są pomijane.
 - Pobierane tylko w tle, do 150 filmów na przebieg, wynik sprawdzany ponownie
   co 3 dni.
 - Dane: `userdata/addon_data/script.sc.widgets/providers.json`.
+- Po pobraniu przeładowują się tylko widżety, w których coś się zmieniło.
+  Ostatni błąd TMDb (np. zły klucz – HTTP 401) jest w powiadomieniu i w
+  **Diagnostyce** (wiersz `VOD icons=…`).
+
+### Obsada w oknie Informacje
+
+Obsada nie jest zapisywana w kafelkach (żeby widżety rysowały się szybko).
+Odświeżanie w tle odkłada obsadę z dodatku do
+`addon_data/script.sc.widgets/cast/`, a okno **Informacje** ładuje ją dopiero
+po otwarciu (osobny wiersz obsady, `plugin://script.sc.widgets/?cast=…`).
+Gdy dodatek nie podał obsady, a klucz TMDb jest ustawiony, obsada jest
+pobierana z TMDb.
 
 ### Sortowanie po ocenie
 

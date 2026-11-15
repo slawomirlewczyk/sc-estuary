@@ -68,9 +68,10 @@ def missing(data, keys):
 
 
 def update(movies, api_key, abort=lambda: False):
-    """movies: {key: tmdb id or None}. Returns True if anything changed."""
+    """movies: {key: tmdb id or None}. Returns the keys whose services changed."""
     data = load()
-    changed = False
+    changed = set()
+    error = None
     now = time.time()
     lookups = 0
     for key, tmdb in movies.items():
@@ -87,17 +88,21 @@ def update(movies, api_key, abort=lambda: False):
             if e.code == 404:
                 entry = {"tmdb": None, "time": now, "providers": []}
             else:
-                log(f"TMDb lookup failed for {key}: {e}")
+                error = f"HTTP {e.code} {e.reason}" + (" (wrong TMDb API key?)" if e.code == 401 else "")
                 break  # bad key or rate limit: try again next run
         except Exception as e:
-            log(f"TMDb lookup failed for {key}: {e}")
+            error = f"{type(e).__name__}: {e}"
             break  # likely offline
-        if entry != known:
-            changed = changed or (known or {}).get("providers") != entry["providers"]
-            data["movies"][key] = entry
-    if lookups:
+        if (known or {}).get("providers") != entry["providers"]:
+            changed.add(key)
+        data["movies"][key] = entry
+    if error:
+        log(f"TMDb lookup failed: {error}")
+    if lookups or error != data.get("error"):
+        data["error"] = error
+        data["error_time"] = now if error else None
         save(data)
-    return changed
+    return changed, error
 
 
 def tmdb_get(path, api_key, **params):
@@ -123,6 +128,17 @@ def find_tmdb(key, api_key):
         return None
     found = tmdb_get(f"/find/{key[5:]}", api_key, external_source="imdb_id").get("movie_results") or []
     return str(found[0]["id"]) if found else None
+
+
+def credits(key, tmdb, api_key):
+    """Cast from TMDb as [{"name", "role", "order", "thumbnail"}]."""
+    tmdb = tmdb or find_tmdb(key, api_key)
+    if not tmdb:
+        return []
+    cast = tmdb_get(f"/movie/{tmdb}/credits", api_key, language="pl-PL").get("cast") or []
+    return [{"name": c.get("name") or "", "role": c.get("character") or "", "order": c.get("order", i),
+             "thumbnail": "https://image.tmdb.org/t/p/w185" + c["profile_path"] if c.get("profile_path") else ""}
+            for i, c in enumerate(cast[:25]) if c.get("name")]
 
 
 def watch_providers(tmdb, api_key):

@@ -22,7 +22,8 @@ from resources.lib import plugin, providers, ratings, store, watched
 AUTO_MIN_GAP = 30  # seconds between automatic full refreshes
 STARTUP_GRACE = 120  # seconds after start without background work (Kodi and add-ons start up)
 PAUSE_BETWEEN = 1.0  # seconds between widgets in a refresh, so Kodi stays responsive
-WATCHED_PROP = "sc_widgets_watched"  # watched ids the widgets were last drawn with
+WATCHED_PROP = "sc_widgets_watched"
+VOD_ERROR_PROP = "sc_widgets_vod_error"  # last TMDb error already shown  # watched ids the widgets were last drawn with
 
 
 class Monitor(xbmc.Monitor):
@@ -100,17 +101,28 @@ def update_providers(monitor, player=None):
     if not (xbmc.getCondVisibility("Skin.HasSetting(sc_vod_icons)") and api_key):
         return
     widgets = store.load()
-    movies = {}
+    movies, keys_by_widget = {}, {}
     for n, widget in enumerate(widgets, 1):
         cached = store.load_entries(n, widget["paths"])
         for entry in (cached[0] if cached else []):
             key = plugin.movie_key(entry) or ""
             if key[:5] in ("imdb:", "tmdb:"):
                 movies.setdefault(key, plugin.tmdb_id(entry))
-    if movies and providers.update(movies, api_key,
-                                   abort=lambda: monitor.abortRequested() or bool(player and player.isPlaying())):
-        store.sync_skin(widgets)  # redraw tiles with the new icons
-        store.log(f"VOD services updated for {len(movies)} movies")
+                keys_by_widget.setdefault(n, set()).add(key)
+    if not movies:
+        return
+    started = time.time()
+    changed, error = providers.update(movies, api_key,
+                                      abort=lambda: monitor.abortRequested() or bool(player and player.isPlaying()))
+    if error and xbmcgui.Window(10000).getProperty(VOD_ERROR_PROP) != error:
+        xbmcgui.Window(10000).setProperty(VOD_ERROR_PROP, error)  # once per error, not every run
+        xbmcgui.Dialog().notification(store.lang(32000), f"TMDb: {error}", xbmcgui.NOTIFICATION_WARNING)
+    # reload only the widgets showing a movie whose services changed
+    only = {n for n, keys in keys_by_widget.items() if keys & changed}
+    if only:
+        store.sync_skin(widgets, only=only)
+    store.event(f"VOD services: {len(changed)} changed, widgets reloaded {sorted(only) or 'none'}, "
+                f"error={error}, {time.time() - started:.0f} s")
 
 
 def main():

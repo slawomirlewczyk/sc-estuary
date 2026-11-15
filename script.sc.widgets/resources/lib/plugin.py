@@ -23,7 +23,7 @@ import xbmc
 import xbmcgui
 import xbmcplugin
 
-from . import providers, ratings, store, watched
+from . import cast, providers, ratings, store, watched
 
 PROPERTIES = [
     "title", "originaltitle", "year", "plot", "plotoutline", "tagline", "rating", "votes",
@@ -39,6 +39,9 @@ def run(argv):
     started = time.time()
     handle = int(argv[1])
     query = parse_qs(argv[2].lstrip("?"))
+    if "cast" in query:  # Info dialog of a widget tile
+        cast.run(handle, query["cast"][0], (query.get("tmdb") or [""])[0])
+        return
     try:
         n = int(query.get("w", ["0"])[0])
     except ValueError:
@@ -59,7 +62,8 @@ def run(argv):
         store.save_entries(n, widget["paths"], entries)
     else:
         entries, age = cached
-        if age > STALE_AFTER:
+        # a list saved by 1.6.8 still carries the cast: refresh it to the light format
+        if age > STALE_AFTER or any("cast" in e for e in entries[:1]):
             store.request_refresh([n])  # draw now, refresh in the background
 
     # "Hide duplicate movies": skip anything an earlier (higher) widget already shows
@@ -132,7 +136,7 @@ def widget_entries(widget):
             if not entry.get("file") or (not last_page and is_folder_entry(entry)):
                 continue
             result.append(entry)
-    return result
+    return cast.split_off(result, movie_key)  # cast is read only by the Info dialog
 
 
 def split_page(url):
@@ -361,10 +365,6 @@ def to_listitem(entry, is_folder, rating_data=None, is_watched_movie=False):
         tag.setRatings(all_ratings, "filmweb" if "filmweb" in extra else "imdb")
     elif own:
         tag.setRating(own[0], own[1])
-    cast = [c for c in entry.get("cast") or [] if isinstance(c, dict) and c.get("name")]
-    if cast:  # shown by the Info dialog ("Obsada")
-        tag.setCast([xbmc.Actor(c["name"], c.get("role") or "", int(c.get("order") or i),
-                                c.get("thumbnail") or "") for i, c in enumerate(cast)])
     if entry.get("runtime"):
         tag.setDuration(int(entry["runtime"]))
     if is_watched_movie:
@@ -372,6 +372,10 @@ def to_listitem(entry, is_folder, rating_data=None, is_watched_movie=False):
     if entry.get("uniqueid"):
         tag.setUniqueIDs({k: str(v) for k, v in entry["uniqueid"].items() if v})
 
+    key = movie_key(entry) or ""
+    if not is_folder and key[:5] in ("imdb:", "tmdb:"):
+        li.setProperty("sc_key", key)  # the Info dialog loads the cast by it
+        li.setProperty("sc_tmdb", tmdb_id(entry) or "")
     if not is_folder:
         # The source add-on was called from outside its own window, so (like FanFilm)
         # it built playable items; Kodi will ask it to resolve the stream on click.

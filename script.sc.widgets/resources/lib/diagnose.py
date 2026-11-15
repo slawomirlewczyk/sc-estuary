@@ -10,7 +10,7 @@ import xbmc
 import xbmcaddon
 import xbmcgui
 
-from . import plugin, store, watched
+from . import cast, plugin, providers, store, watched
 
 SAMPLE = 12  # movies listed per widget
 
@@ -38,6 +38,16 @@ def run():
     add(f"Kodi video db {watched.kodi_db_file()}: watched plugin files={len(kodi_files)}")
     add(f"own marks file: {watched.OWN_FILE} exists={os.path.exists(watched.OWN_FILE)}, "
         f"data dir writable={os.access(store.DATA_DIR, os.W_OK)}")
+    vod = providers.load()
+    with_services = sum(1 for m in vod["movies"].values() if m.get("providers"))
+    add(f"VOD icons={xbmc.getCondVisibility('Skin.HasSetting(sc_vod_icons)')}, TMDb key set={bool(store.tmdb_key())}, "
+        f"movies checked={len(vod['movies'])}, with services in {providers.COUNTRY}={with_services}, "
+        f"last error={vod.get('error') or '-'}")
+    try:
+        saved_cast = len([f for f in os.listdir(cast.CAST_DIR) if f.endswith(".json")])
+    except OSError:
+        saved_cast = 0
+    add(f"saved cast: {saved_cast} movies")
     ids = watched.all_ids(fresh=True)
     events = store.recent_events()
     add("")
